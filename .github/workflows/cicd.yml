@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0  
+
+      - name: Server
+        working-directory: ./server
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?schema=public
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm generate
+          pnpm build
+
+      - name: Client
+        working-directory: ./client
+        env:
+          NEXT_PUBLIC_API_URL: https://example.com
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm exec next build
