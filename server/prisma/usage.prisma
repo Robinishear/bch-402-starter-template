@@ -1,0 +1,15 @@
+model Usage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  invoiceId String   @unique
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  feature   String
+  prompt    String
+  result    String
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("usage")
+}

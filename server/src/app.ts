@@ -5,7 +5,8 @@ import express, { Application, Request, Response } from "express";
 import { cors } from "./app/config/cors";
 import { logger } from "./app/config/logger";
 import { limiter } from "./app/config/rate-limit";
-import { apiRoutes } from "./routes";
+import { apiRoutes } from "./app/routes";
+
 import { globalErrorHandler } from "./shared/middlewares/error.middleware";
 import { notFound } from "./shared/middlewares/not-found.middleware";
 import { auth } from "./lib/auth";

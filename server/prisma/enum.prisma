@@ -1,0 +1,12 @@
+enum Role {
+  USER
+  ADMIN
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  COMPLETED
+  EXPIRED
+  UNDERPAID
+}

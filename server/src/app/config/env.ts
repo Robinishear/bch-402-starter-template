@@ -52,7 +52,7 @@ const loadEnvVariables = (): EnvConfig => {
     "PORT",
     "DATABASE_URL",
     "FRONTEND_ORIGIN",
-    "REDIS_URL",
+    // "REDIS_URL",
 
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
@@ -71,11 +71,11 @@ const loadEnvVariables = (): EnvConfig => {
 
     "AI_PROVIDER",
     "GEMINI_API_KEY",
-    "OPENAI_API_KEY",
+    // "OPENAI_API_KEY",
 
-    "CLOUDINARY_CLOUD_NAME",
-    "CLOUDINARY_API_KEY",
-    "CLOUDINARY_API_SECRET",
+    // "CLOUDINARY_CLOUD_NAME",
+    // "CLOUDINARY_API_KEY",
+    // "CLOUDINARY_API_SECRET",
   ];
 
   requiredEnvVariables.forEach((variable) => {

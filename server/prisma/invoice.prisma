@@ -1,0 +1,23 @@
+model Invoice {
+  id            String        @id @default(cuid())
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+  feature       String
+  input         String
+  derivIndex    Int           @unique @default(autoincrement())
+  payAddress    String        @unique
+  priceUsdCents Int
+  amountSats    BigInt
+  status        InvoiceStatus @default(PENDING)
+  txid          String?       @unique
+  paidAt        DateTime?
+  expiresAt     DateTime
+  createdAt     DateTime      @default(now())
+  usage         Usage?
+
+  @@index([status, expiresAt])
+  @@index([userId, createdAt])
+
+  @@map("invoice")
+}
+
