@@ -1,122 +1,112 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { createClient, RedisClientType } from "redis";
+import { createClient } from "redis";
 import { envVars } from "../config/env";
 
+type RedisClient = ReturnType<typeof createClient>;
+
 class RedisService {
-  private client: RedisClientType | null = null;
-  private isConnected: boolean = false;
+  private client: RedisClient | null = null;
+  private connecting: Promise<void> | null = null;
 
   async connect(): Promise<void> {
-    try {
-      const redisUrl = envVars.REDIS_URL;
+    if (this.client?.isReady) return;
 
-      this.client = createClient({ url: redisUrl });
+    // prevent multiple connect()'s at once
+    if (this.connecting) return this.connecting;
 
-      // Handle connection events
-      this.client.on("error", (err) => {
-        console.error("Redis Client Error: ", err);
-        this.isConnected = false;
+    this.connecting = this.doConnect().finally(() => {
+      this.connecting = null;
+    });
+
+    return this.connecting;
+  }
+
+  private async doConnect(): Promise<void> {
+    if (!this.client) {
+      this.client = createClient({
+        url: envVars.REDIS_URL,
+        // If Redis is disconnected, commands will fail immediately instead of being added to a queue.
+        disableOfflineQueue: true,
+        socket: {
+          connectTimeout: 5000,
+          reconnectStrategy: (retries: number) => Math.min(retries * 200, 5000),
+        },
       });
 
-      //   Connect event fires when the client successfully connects to the Redis server
-      this.client.on("connect", () => {
-        console.log("Redis Client Connected");
-        this.isConnected = true;
+      this.client.on("error", (error) => {
+        console.error("Redis Client Error:", error);
       });
+      this.client.on("ready", () => console.log("Redis Client Ready"));
+      this.client.on("reconnecting", () =>
+        console.log("Redis Client Reconnecting"),
+      );
+      this.client.on("end", () => console.log("Redis Client Disconnected"));
+    }
 
-      //   Ready event fires when the client is ready to receive commands
-      this.client.on("ready", () => {
-        console.log("Redis Client Ready");
-        this.isConnected = true;
-      });
-
-      //   End event fires when the client is disconnected
-      this.client.on("end", () => {
-        console.log("Redis Client Disconnected");
-        this.isConnected = false;
-      });
-
-      //   Reconnect event fires when the client tries to reconnect to the Redis server
-      this.client.on("reconnecting", () => {
-        console.log("Redis Client Reconnecting");
-      });
-
+    if (!this.client.isOpen) {
       await this.client.connect();
-    } catch (error) {
-      console.log(error);
-      this.isConnected = false;
     }
   }
 
-  //   Helper method to ensure Redis client is connected
-  private ensureConnection(): RedisClientType {
-    if (!this.client) {
-      throw new Error("Redis client not initialized. Call connect() first.");
+  private ensureConnection(): RedisClient {
+    if (!this.client?.isReady) {
+      throw new Error("Redis client is not ready.");
     }
-
-    if (!this.isConnected) {
-      throw new Error("Redis client not connected.");
-    }
-
     return this.client;
   }
 
-  //  Method to set a key-value pair in Redis with optional TTL
   async get(key: string): Promise<string | null> {
-    try {
-      const client = this.ensureConnection();
-      return await client.get(key);
-    } catch (error) {
-      console.error("Redis GET error: ", error);
-      return null;
+    return this.ensureConnection().get(key);
+  }
+
+  /** The value is always stored as JSON (to align with JSON.parse in getOrSet) */
+  async set(key: string, value: unknown, ttlInSeconds: number): Promise<void> {
+    if (!Number.isInteger(ttlInSeconds) || ttlInSeconds <= 0) {
+      throw new Error("TTL must be a positive integer.");
     }
-  }
 
-  //  Method to get a value by key from Redis
-  async set(key: string, value: any, ttlInSeconds: number): Promise<void> {
-    try {
-      const client = this.ensureConnection();
+    const stringValue = JSON.stringify(value);
 
-      const stringValue =
-        typeof value === "string" ? value : JSON.stringify(value);
-
-      await client.set(key, stringValue, { EX: ttlInSeconds });
-    } catch (err) {
-      console.error("Redis SET error: ", err);
+    if (stringValue === undefined) {
+      throw new Error("Value cannot be serialized to JSON.");
     }
+
+    await this.ensureConnection().set(key, stringValue, { EX: ttlInSeconds });
   }
 
-  //  Method to update a key in Redis with optional TTL
-  async update(key: string, value: any, ttlInSeconds: number): Promise<void> {
-    await this.set(key, value, ttlInSeconds);
-  }
-
-  //* Method to delete a key from Redis
   async delete(key: string): Promise<void> {
-    try {
-      const client = this.ensureConnection();
-      await client.del(key);
-    } catch (error) {
-      console.log("Redis DELETE error: ", error);
-    }
+    await this.ensureConnection().del(key);
   }
 
-  //  Method to check if Redis is available
+  /** Deletes all keys that start with the given prefix (using SCAN, not KEYS) */
+  async deleteByPrefix(prefix: string): Promise<number> {
+    const client = this.ensureConnection();
+    let deleted = 0;
+
+    // Redis v4 returns a single key, while v5 returns an array of keys — both cases are handled.
+    for await (const result of client.scanIterator({
+      MATCH: `${prefix}*`,
+      COUNT: 100,
+    })) {
+      const keys = (Array.isArray(result) ? result : [result]) as string[];
+      if (keys.length > 0) {
+        deleted += await client.del(keys);
+      }
+    }
+
+    return deleted;
+  }
+
   async isAvailable(): Promise<boolean> {
     try {
-      const client = this.ensureConnection();
-      await client.ping();
-      return true;
-    } catch (error) {
-      console.error(error);
+      return (await this.ensureConnection().ping()) === "PONG";
+    } catch {
       return false;
     }
   }
-  //  Method to disconnect Redis
+
   async disconnect(): Promise<void> {
-    if (this.client && this.isConnected) {
+    if (this.client?.isOpen) {
       await this.client.quit();
-      this.isConnected = false;
     }
   }
 }

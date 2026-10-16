@@ -39,6 +39,7 @@
     "express-rate-limit": "^8.7.1",
     "http-status": "^2.1.0",
     "install": "^0.13.0",
+    "morgan": "^1.12.1",
     "multer": "^2.4.0",
     "multer-storage-cloudinary": "^4.0.0",
     "redis": "^6.3.0",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/morgan": "^1.9.10",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.5",
     "i": "^0.3.7",

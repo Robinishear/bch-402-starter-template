@@ -1,8 +1,9 @@
 import dotenv from "dotenv";
 import status from "http-status";
 import AppError from "../error-helpers/AppError";
+import path from "path";
 
-dotenv.config();
+dotenv.config({ path: path.join(process.cwd(), ".env") });
 
 interface EnvConfig {
   NODE_ENV: string;
