@@ -5,8 +5,8 @@ import { Role, UserStatus,  } from "../../generated/prisma";
 import { envVars } from "../config/env";
 import { prisma } from "../lib/prisma";
 import AppError from "../error-helpers/AppError";
-import { CookieUtils } from "../../utils/cookie";
-import { jwtUtils } from "../../utils/jwt";
+import { CookieUtils } from "../utils/cookie";
+import { jwtUtils } from "../utils/jwt";
 
 export const checkAuth =
   (...authRoles: Role[]) =>
