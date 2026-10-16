@@ -117,7 +117,7 @@ export const handlePrismaClientKnownRequestError = (
 
   // split by new line and take the first line as the main message, rest can be added to error sources
 
-  const lines = cleanMessage.split("\n").filter((line) => line.trim());
+  const lines = cleanMessage.split("\n").filter((line : string) => line.trim());
   const mainMessage =
     lines[0] || "An error occurred with the database operation.";
 
@@ -151,7 +151,7 @@ export const handlePrismaClientUnknownError = (
   // Remove the "Invalid `prisma.user.create()` invocation: " part from the message for better readability
   cleanMessage = cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i, "");
 
-  const lines = cleanMessage.split("\n").filter((line) => line.trim());
+  const lines = cleanMessage.split("\n").filter((line : string) => line.trim());
   const mainMessage =
     lines[0] || "An unknown error occurred with the database operation.";
 
@@ -178,7 +178,7 @@ export const handlePrismaClientValidationError = (
   // Remove the "Invalid `prisma.user.create()` invocation: " part from the message for better readability
   cleanMessage = cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i, "");
 
-  const lines = cleanMessage.split("\n").filter((line) => line.trim());
+  const lines = cleanMessage.split("\n").filter((line : string) => line.trim());
 
   const errorSources: TErrorSources[] = [];
 
@@ -191,7 +191,7 @@ export const handlePrismaClientValidationError = (
 
   const mainMessage =
     lines.find(
-      (line) =>
+      (line : string) =>
         !line.includes("Argument") && !line.includes("→") && line.length > 10,
     ) ||
     lines[0] ||
@@ -221,7 +221,7 @@ export const handlerPrismaClientInitializationError = (
 
   cleanMessage.replace(/Invalid `.*?` invocation:?\s*/i, "");
 
-  const lines = cleanMessage.split("\n").filter((line) => line.trim());
+  const lines = cleanMessage.split("\n").filter((line : string) => line.trim());
 
   const mainMessage =
     lines[0] || "An error occurred while initializing the Prisma Client.";

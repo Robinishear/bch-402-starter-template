@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { envVars } from "../config/env";
-import { prisma } from "../database/prisma";
+import { prisma } from "./prisma";
 
 const isProd = envVars.NODE_ENV === "production";
 

@@ -13,6 +13,11 @@ interface EnvConfig {
   FRONTEND_ORIGIN: string;
   REDIS_URL: string;
 
+  ACCESS_TOKEN_SECRET: string;
+  REFRESH_TOKEN_SECRET: string;
+  ACCESS_TOKEN_EXPIRES_IN: string;
+  REFRESH_TOKEN_EXPIRES_IN: string;
+
   AUTH: {
     BETTER_AUTH_SECRET: string;
     BETTER_AUTH_URL: string;
@@ -38,12 +43,6 @@ interface EnvConfig {
     GEMINI_API_KEY: string;
     OPENAI_API_KEY: string;
   };
-
-  CLOUDINARY: {
-    CLOUDINARY_CLOUD_NAME: string;
-    CLOUDINARY_API_KEY: string;
-    CLOUDINARY_API_SECRET: string;
-  };
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -56,6 +55,10 @@ const loadEnvVariables = (): EnvConfig => {
 
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
+    "ACCESS_TOKEN_SECRET",
+    "REFRESH_TOKEN_SECRET",
+    "ACCESS_TOKEN_EXPIRES_IN",
+    "REFRESH_TOKEN_EXPIRES_IN",
 
     "ADMIN_EMAIL",
 
@@ -72,10 +75,6 @@ const loadEnvVariables = (): EnvConfig => {
     "AI_PROVIDER",
     "GEMINI_API_KEY",
     // "OPENAI_API_KEY",
-
-    // "CLOUDINARY_CLOUD_NAME",
-    // "CLOUDINARY_API_KEY",
-    // "CLOUDINARY_API_SECRET",
   ];
 
   requiredEnvVariables.forEach((variable) => {
@@ -127,6 +126,11 @@ const loadEnvVariables = (): EnvConfig => {
     FRONTEND_ORIGIN: process.env.FRONTEND_ORIGIN as string,
     REDIS_URL: process.env.REDIS_URL as string,
 
+    ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET as string,
+    REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET as string,
+    ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
+    REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
+
     AUTH: {
       BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET as string,
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL as string,
@@ -152,13 +156,15 @@ const loadEnvVariables = (): EnvConfig => {
       GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? "",
       OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
     },
-
-    CLOUDINARY: {
-      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME as string,
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY as string,
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET as string,
-    },
   };
 };
 
 export const envVars = loadEnvVariables();
+
+
+// How it works: It uses dotenv to read the 
+// .env file and custom logic instead of Zod to check
+// whether all required secrets and configurations 
+// are properly provided. If any required value is missing,
+// it prevents the server from starting and throws an error to
+// indicate the problem.

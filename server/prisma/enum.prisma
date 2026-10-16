@@ -10,3 +10,10 @@ enum InvoiceStatus {
   EXPIRED
   UNDERPAID
 }
+
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}

@@ -30,9 +30,9 @@
   "type": "module",
   "dependencies": {
     "@google/genai": "^2.29.0",
+    "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "better-auth": "^1.7.7",
-    "cloudinary": "^2.11.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^18.0.7",
@@ -41,9 +41,9 @@
     "helmet": "^8.3.0",
     "http-status": "^2.1.0",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.3",
     "morgan": "^1.12.1",
-    "multer": "^2.4.0",
-    "multer-storage-cloudinary": "^4.0.0",
+    "pg": "^8.23.1",
     "qs": "^6.16.1",
     "redis": "^6.3.0",
     "zod": "^4.6.7"
@@ -53,12 +53,13 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/helmet": "^4.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.5",
     "@types/qs": "^6.15.1",
     "i": "^0.3.7",
-    "prisma": "8.0.0-rc.22",
+    "prisma": "^7.10.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

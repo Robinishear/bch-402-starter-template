@@ -9,6 +9,7 @@ model User {
   isDeleted          Boolean            @default(false)
   deletedAt          DateTime?
   role               Role               @default(USER)
+  status               UserStatus        @default(ACTIVE)
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 

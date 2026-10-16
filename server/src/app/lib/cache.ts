@@ -5,6 +5,7 @@ const JITTER_RATIO = 0.1; // TTL-E ±10% randomness
 
 type ReadResult<T> = { hit: true; value: T } | { hit: false };
 
+// real api use CacheService
 class CacheService {
   // Ongoing fetches for the same key (to prevent cache stampede)
   private inFlight = new Map<string, Promise<unknown>>();

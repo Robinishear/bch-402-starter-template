@@ -9,3 +9,10 @@ const limiter = rateLimit({
 });
 
 export { limiter };
+
+
+// How it works: It uses the `express-rate-limit` 
+// package to prevent excessive or spam requests from 
+// the same IP address within a specified time period. 
+// In production, the limit is set to 200 requests per minute to 
+// help protect the server.

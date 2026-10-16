@@ -6,13 +6,12 @@ import { cors } from "./app/config/cors";
 import { logger } from "./app/config/logger";
 import { limiter } from "./app/config/rate-limit";
 import { apiRoutes } from "./app/routes";
-
-import { globalErrorHandler } from "./shared/middlewares/error.middleware";
-import { notFound } from "./shared/middlewares/not-found.middleware";
-import { auth } from "./lib/auth";
 import { toNodeHandler } from "better-auth/node";
 import path from "path";
-import { authRoutes } from "./modules/auth/auth.route";
+// import { authRoutes } from "./modules/auth/auth.route";
+import { auth } from "./app/lib/auth";
+import { notFound } from "./app/middleware/notFound";
+import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 
 const app: Application = express();
 
@@ -59,7 +58,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-app.use("/api/v1/auth", authRoutes);
+// app.use("/api/v1/auth", authRoutes);
 app.use("/api/auth-extra", (req, res) => {
   return toNodeHandler(auth)(req, res);
 });
