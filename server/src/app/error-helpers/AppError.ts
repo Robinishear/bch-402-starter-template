@@ -14,9 +14,3 @@ class AppError extends Error {
 }
 
 export default AppError;
-
-
-
-//`AppError`: These are used to create custom 
-// errors so that whenever an error occurs anywhere in the server,
-// a specific HTTP status code and error message can be returned.

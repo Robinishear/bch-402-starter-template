@@ -1,131 +1,106 @@
-আপনার প্রজেক্টের আর্কিটেকচার এবং ফাইলগুলোর স্ট্রাকচার দারুণভাবে সাজিয়েছেন ভাই! ভবিষ্যতে কোড করার সময় যেন খুব সহজে পুরো ফ্লো মাথায় চলে আসে, সেজন্য আপনার দেওয়া ফাইলগুলো নিয়ে ৫-৬ লাইনের সহজ বাংলায় এই ডকুমেন্টেশনটি তৈরি করে দিলাম:
-
----
-
-### ১. এরর হেল্পার (Error Helper)
-
-* **অ্যাপ এরর হ্যান্ডেলার (`App Error Handler`)**
-* এই ফাইলটি প্রজেক্টের কাস্টম বা নিজেদের তৈরি করা এররগুলো হ্যান্ডেল করার মূল ভিত্তি হিসেবে কাজ করে।
-* যেকোনো এপিআই রিকোয়েস্টে লজিক্যাল বা বিজনেস লেভেলে সমস্যা দেখা দিলে এটি দিয়ে নির্দিষ্ট স্ট্যাটাস কোড পাঠানো হয়।
-* কোডজুড়ে স্ট্যান্ডার্ড এরর রেসপন্স পাঠানোর জন্য এটি সেন্ট্রালাইজড বা কেন্দ্রীয়ভাবে কাজ করে।
-* ত্রুটি ধরা পড়ার সাথে সাথে অ্যাপ ক্র্যাশ না করে যেন সুন্দরভাবে ক্লায়েন্টের কাছে মেসেজ পৌঁছায় তা নিশ্চিত করে।
-* কোডিং করার সময় বারবার এক্সেপশন লেখার ঝামেলা কমিয়ে কোডকে ক্লিন রাখে।
+You’ve done an excellent job organizing the architecture and file structure of your project! To help you easily grasp the overall flow while coding in the future, I’ve put together this brief documentation (in simple Bengali) based on the files you provided:
 
 
-* **প্রিজমা এরর হ্যান্ডেলার (`Prisma Error Handler`)**
-* ডাটাবেজ অপারেশন চালানোর সময় প্রিজমা থেকে আসা বিভিন্ন টেকনিক্যাল এররগুলোকে এটি ধরে।
-* ডুপ্লিকেট এন্ট্রি বা ডাটা না পাওয়ার মতো কমন ডাটাবেজ এররগুলোকে ইউজার-ফ্রেন্ডলি মেসেজে রূপান্তর করে।
-* ডাটাবেজের অজানা ক্র্যাশ থেকে ব্যাকএন্ড সার্ভারকে সুরক্ষিত রাখতে সাহায্য করে।
-* ডেভলপমেন্টের সময় ডাটাবেজ কুয়েরি রিলেটেড বাগ খুব দ্রুত খুঁজে বের করতে এটি দারুণ কার্যকরী।
-* ডাটাবেজ লেভেলের প্রবলেমগুলোকে সুন্দরভাবে ক্যাচ করে মেইন ফ্লোতে পাস করে দেয়।
+### 1. Error Helpers
+ **App Error Handler**
+ This file serves as the core foundation for handling custom (applicationspecific) errors.
+ It is used to send specific status codes whenever logical or businesslevel issues arise during an API request.
+ It acts as a centralized mechanism for delivering standard error responses throughout the codebase.
+ It ensures that when an error occurs, the application doesn't crash; instead, it gracefully delivers a meaningful message to the client.
+ It keeps the code clean by eliminating the need to repeatedly write out exceptionhandling logic.
+
+ **Prisma Error Handler**
+ This handler catches various technical errors that may arise from Prisma during database operations.
+ It translates common database errors—such as duplicate entries or missing records—into userfriendly messages.
+ It helps protect the backend server from unexpected crashes caused by database issues.
+ It is highly effective for quickly identifying bugs related to database queries during the development process.
+ It gracefully catches databaselevel issues and passes them along to the main application flow.
+
+ **Zod Error**
+ This handler is triggered whenever the Zod schema detects an error during request body or data validation. \* If a user submits data in an incorrect format, it precisely identifies which field contains the issue.
+ It generates accurate and understandable error messages for frontend developers or clients.
+ It serves as a first line of defense, ensuring input sanitization and security.
+ It prevents potential damage to the database or server that could be caused by the input of invalid data.
+
+### 2. Interface
+ **Error Interface**
+ Defines a specific type or structure for all error objects within the project.
+ Ensures that error responses adhere to the correct format, in compliance with TypeScript’s strict rules.
+ Significantly reduces the likelihood of type mismatches or bugs during development.
+ Provides helpful IntelliSense or code suggestions when handling errors.
+ Ensures a consistent and uniform data structure for errors throughout the entire application.
+
+ **index.d.ts**
+ Serves as a global type declaration file within the project.
+ Allows for the addition of custom properties (such as user information or session data) to the Express request object.
+ Essential for extending the types of thirdparty or custom modules.
+ Prevents unnecessary TypeScript errors or warnings from appearing in the code editor.
+ Helps organize and consolidate the project's global type definitions in one place.
+
+ **Query Interface**
+ Defines the types for query parameters used when filtering, sorting, or paginating data from a database.
+ Validates that the query structure received by the API conforms to the expected, safe format.
+ Guides developers on the correct properties to use when handling query requests.
+ Maintains type safety when querying large datasets. \* Protects the code from the passing of unnecessary or incorrect query parameters.
+
+ **Query User Interface**
+ Defines type structures specifically for userrelated queries and filtering.
+ Uses TypeScript to correctly bind user search or datafetching parameters.
+ Keeps the code clean and readable when retrieving specific user data from the database.
+ Prevents the entry of incorrect types into the query logic of the user module.
+ Helps enhance the scalability of the entire user query system.
 
 
-* **জট এরর (`Zod Error`)**
-* রিকোয়েস্টের বডি বা ডাটা ভ্যালিডেশনের সময় Zod স্কিমা কোনো ভুল পেলে এই হ্যান্ডেলারটি সক্রিয় হয়।
-* ইউজার ভুল ফরম্যাটে ডাটা পাঠালে কোন ফিল্ডে সমস্যা তা একদম সুনির্দিষ্টভাবে ধরিয়ে দেয়।
-* ফ্রন্টএন্ড ডেভেলপার বা ক্লায়েন্টের জন্য নির্ভুল ও বোধগম্য এরর মেসেজ জেনারেট করে।
-* ইনপুট স্যানিটাইজেশন এবং সিকিউরিটি নিশ্চিত করতে এটি প্রথম স্তরের ডিফেন্স হিসেবে কাজ করে।
-* ভুল ডাটা ইনপুট দিয়ে যাতে ডাটাবেজ বা সার্ভার ক্ষতিগ্রস্ত না হয়, তা প্রতিরোধ করে।
+### 3. Middleware
+ **Check Auth**
+ Securely verifies whether a user's request contains a valid token or session.
+ Prevents unauthorized access to protected APIs or routes.
+ Upon successful authentication, attaches user information to the request object and passes it to the next controller.
+ Blocks unauthorized requests or potential hacking attempts at an early stage.
+ Acts as the primary guardian for ensuring route security across the entire project.
+
+ **Global Error Handler**
+ Catches unhandled errors originating from any part of the application.
+ Intercepts potential application crashes and provides a graceful response to the user.
+ In production mode, hides sensitive error details and returns clean, userfriendly error messages.
+ Serves as the final line of defense for managing code errors centrally.
+ Essential for maintaining server stability and ensuring a smooth user experience.
+
+ **Not Found**
+ Triggered when a user attempts to access an API route or link that does not exist within the project.
+ Returns a standard `404 Not Found` status code along with a clear error message.
+ Prevents the system from becoming unstable or confused when requests are made to nonexistent endpoints.
+ Helps in easily identifying errors in routing configuration.
+ Provides a professional approach to handling missing API routes.
+ 
+ \* **Valid Request**
+ Input data sent from the client is validated using a Zod schema before it reaches the controller.
+ If the input data is invalid, the request is rejected before it can proceed to the controller.
+ It saves server processing time and ensures that only valid data is processed.
+ It prevents malicious or erroneous data from entering the backend.
+ It keeps the API data flow entirely reliable and errorfree.
 
 
-
----
-
-### ২. ইন্টারফেস (Interface)
-
-* **এরর ইন্টারফেস (`Error Interface`)**
-* প্রজেক্টের সব ধরনের এরর অবজেক্টের জন্য একটি নির্দিষ্ট টাইপ বা স্ট্রাকচার ডিফাইন করে দেয়।
-* টাইপস্ক্রিপ্টের কঠোর নিয়ম মেনে এরর রেসপন্সগুলো সঠিক ফরম্যাটে আছে কি না তা নিশ্চিত করে।
-* কোড লেখার সময় অহেতুক টাইপ মিসম্যাচ বা বাগ আসার সম্ভাবনা অনেক কমিয়ে দেয়।
-* এরর হ্যান্ডেলিংয়ের সময় প্রপার ইন্টেলিজেন্স বা কোড সাজেশন পেতে এটি সাহায্য করে।
-* পুরো অ্যাপজুড়ে এররের ডেটা স্ট্রাকচার এক এবং অভিন্ন রাখতে ভূমিকা রাখে।
+### 4. Utilities
+* **`cookies.ts`**
+* Contains helper functions for securely setting, reading, or deleting cookies in the browser.
+* Manages security flags when storing sensitive data—such as authentication tokens—in cookies.
+* Ensures the `HttpOnly` and `Secure` properties are set to prevent CrossSite Scripting (XSS) and cookie theft.
+* Simplifies the process of clearing cookies during logout or upon session expiration.
+* Makes cookie management code reusable throughout the application.
 
 
-* **ইনডেক্স ডট ডি ডট টিএস (`index.d.ts`)**
-* এটি মূলত গ্লোবাল টাইপ ডেকোরেশন ফাইল হিসেবে প্রজেক্টে ব্যবহৃত হয়।
-* এক্সপ্রেসের রিকোয়েস্ট অবজেক্টে কাস্টম প্রপার্টি (যেমন ইউজারের তথ্য বা সেশন) যুক্ত করার সুযোগ দেয়।
-* থার্ড-পার্টি বা কাস্টম মডিউলের টাইপ এক্সটেন্ড করার জন্য এটি অপরিহার্য।
-* কোড এডিটরে টাইপস্ক্রিপ্টের কোনো এরর যেন অযথা বিরক্ত না করে, তা ম্যানেজ করে।
-* প্রজেক্টের গ্লোবাল টাইপ ডেফিনেশনগুলো এক জায়গায় গুছিয়ে রাখতে সাহায্য করে।
+* **`jwt.ts`**
+* Handles the core tasks of creating (signing) and verifying JSON Web Tokens (JWT).
+* Issues a secure access token to a user upon successful login.
+* Decodes tokens to identify the user when they access protected routes.
+* Precisely controls the expiration date/time of tokens.
+* Ensures tokens are generated while maintaining cryptographic security.
 
 
-* **কুয়েরি ইন্টারফেস (`Query Interface`)**
-* ডাটাবেজ থেকে ডাটা ফিল্টার, সর্টিং বা পেজিনেশন করার সময় কুয়েরি প্যারামিটারগুলোর টাইপ নির্ধারণ করে।
-* এপিআইতে আসা কুয়েরি স্ট্রাকচার নিরাপদ ও প্রত্যাশিত ফরম্যাটে আছে কি না তা চেক করে।
-* কুয়েরি রিকোয়েস্ট হ্যান্ডেল করার সময় ডেভলপারকে সঠিক প্রপার্টি ব্যবহারের গাইডলাইন দেয়।
-* বড় ডেটাসেট কুয়েরি করার সময় কোডের টাইপ সেফটি বজায় রাখতে কাজ করে।
-* অপ্রয়োজনীয় বা ভুল কুয়েরি প্যারামিটার পাস হওয়া থেকে কোডকে রক্ষা করে।
-
-
-* **কুয়েরি ইউজার ইন্টারফেস (`Query User Interface`)**
-* বিশেষভাবে ইউজার রিলেটেড কুয়েরি এবং ফিল্টারিংয়ের জন্য টাইপ স্ট্রাকচার ডিফাইন করে।
-* ইউজারের সার্চ বা ডেটা ফেচিং প্যারামিটারগুলো সঠিকভাবে টাইপস্ক্রিপ্ট দিয়ে বাইন্ড করে।
-* ডাটাবেজ থেকে নির্দিষ্ট ইউজার ডাটা তোলার সময় কোড ক্লিন ও রিডেবল রাখে।
-* ইউজার মডিউলের কুয়েরি লজি্কে কোনো ভুল টাইপ এন্ট্রি হওয়া রোধ করে।
-* পুরো ইউজার কুয়েরি সিস্টেমের স্কেলেবিলিটি বাড়াতে সহায়তা করে।
-
-
-
----
-
-### ৩. মিডলওয়্যার (Middleware)
-
-* **চেক অথ (`Check Auth`)**
-* ইউজারের রিকোয়েস্টে বৈধ টোকেন বা সেশন আছে কি না তা সিকিউরভাবে যাচাই করে।
-* লগইন করা ছাড়া কেউ প্রটেক্টটেড এপিআই বা রাউটে প্রবেশ করতে চাইলে বাধা দেয়।
-* অথেন্টিকেশন সফল হলে ইউজারের তথ্য রিকোয়েস্ট অবজেক্টে যুক্ত করে পরবর্তী কন্ট্রোলারে পাঠায়।
-* অননুমোদিত বা হ্যাকিংয়ের চেষ্টা করা রিকোয়েস্টগুলোকে শুরুতেই ব্লক করে দেয়।
-* পুরো প্রজেক্টের রাউট সিকিউরিটি নিশ্চিত করার প্রধান প্রহরী হিসেবে কাজ করে।
-
-
-* **গ্লোবাল এরর হ্যান্ডেলার (`Global Error Handler`)**
-* অ্যাপ্লিকেশনের যেকোনো জায়গা থেকে ছুটে আসা আনহ্যান্ডেলড এররগুলোকে সবার শেষে ধরে।
-* কোডের কোথাও ক্র্যাশ ঘটার উপক্রম হলে এটি মাঝপথে ধরে ইউজারকে সুন্দর রেসপন্স দেয়।
-* প্রোডাকশন মোডে সংবেদনশীল এরর ডিটেইলস লুকিয়ে রেখে ক্লিন এরর মেসেজ পাঠায়।
-* সেন্ট্রাল বা কেন্দ্রীয়ভাবে কোডের ত্রুটি ম্যানেজ করার শেষ ডিফেন্স লাইন।
-* সার্ভারের স্থায়িত্ব ও ইউজার এক্সপেরিয়েন্স স্মুথ রাখতে এটি অপরিহার্য।
-
-
-* **নট ফাউন্ড (`Not Found`)**
-* ইউজার যদি এমন কোনো এপিআই রাউট বা লিংকে হিট করে যা আমাদের প্রজেক্টে নেই, তখন এটি কাজ করে।
-* একটি স্ট্যান্ডার্ড `404 Not Found` স্ট্যাটাস কোডসহ সুন্দর এরর মেসেজ রিটার্ন করে।
-* ভুল বা অস্তিত্বহীন এন্ডপয়েন্টে রিকোয়েস্ট গেলে সিস্টেমকে কনফিউজড হতে দেয় না।
-* রাউটিং কনফিগারেশনের ভুলগুলো সহজে ধরতে সাহায্য করে।
-* এপিআইয়ের মিসিং রুট হ্যান্ডেলিংকে প্রফেশনাল রূপ দেয়।
-
-
-* **ভ্যালিড রিকোয়েস্ট (`Valid Request`)**
-* ক্লায়েন্ট থেকে পাঠানো ইনপুট ডেটা কন্ট্রোলারে পৌঁছানোর আগেই Zod স্কিমা দিয়ে যাচাই করে নেয়।
-* ইনপুট ডাটা সঠিক না হলে কন্ট্রোলারে যাওয়ার আগেই রিকোয়েস্ট বাতিল করে দেয়।
-* সার্ভারের প্রসেসিং টাইম বাঁচায় এবং ভ্যালিড ডেটা নিয়ে কাজ করা নিশ্চিত করে।
-* ব্যাকএন্ডে ক্ষতিকারক বা ত্রুটিপূর্ণ ডেটা প্রবেশ রোধ করে।
-* এপিআই ডেটা ফ্লোকে শতভাগ নির্ভরযোগ্য ও ত্রুটিমুক্ত রাখে।
-
-
-
----
-
-### ৪. ইউটিলিটিস (Utilities)
-
-* **কুকিজ ডট টিএস (`cookies.ts`)**
-* ব্রাউজারে সিকিউরলি কুকি সেট, রিড বা ডিলিট করার বিভিন্ন হেল্পার ফাংশন ধারণ করে।
-* অথেন্টিকেশন টোকেন বা সেন্সিটিভ ডাটা কুকিতে স্টোর করার সময় সিকিউরিটি ফ্ল্যাগ হ্যান্ডেল করে।
-* ক্রশ-সাইট স্ক্রিপ্টিং (XSS) বা কু্যকি চুরি রোধে HttpOnly এবং Secure প্রপার্টি নিশ্চিত করে।
-* লগআউট বা সেশন এক্সপায়ারের সময় কুকি পরিষ্কার করার কাজ সহজ করে।
-* কুকি ম্যানেজমেন্টের কোডগুলোকে রিইউজেবল বা বারবার ব্যবহারোপযোগী করে তোলে।
-
-
-* **জডব্লিউটি ডট টিএস (`jwt.ts`)**
-* JSON Web Token (JWT) তৈরি (Sign) এবং ভেরিফাই (Verify) করার মূল কাজগুলো করে।
-* ইউজার সফলভাবে লগইন করার পর তাকে সিকিউর অ্যাক্সেস টোকেন প্রদান করে।
-* পরবর্তীতে সুরক্ষিত রাউটগুলোতে ইউজারের পরিচয় শনাক্ত করতে টোকেন ডিকোড করে।
-* টোকেনের মেয়াদ বা এক্সপায়ারি ডেট নিখুঁতভাবে কন্ট্রোল করে।
-* ক্রিপ্টোগ্রাফিক সিকিউরিটি বজায় রেখে টোকেন জেনারেট নিশ্চিত করে।
-
-
-* **টোকেন ডট টিএস (`token.ts`)**
-* প্রজেক্টের অন্যান্য র্যান্ডম বা স্পেশাল টোকেন জেনারেশনের কাজগুলো পরিচালনা করে।
-* পাসওয়ার্ড রিসেট বা ইমেল ভেরিফিকেশনের জন্য ইউনিক টোকেন বানাতে সাহায্য করে।
-* টোকেন হ্যান্ডেলিংয়ের লজিকগুলোকে আলাদা করে কোড ক্লিন রাখতে ভূমিকা রাখে।
-* সিকিউরিটি মেইনটেইন করে ক্রিপ্টোগ্রাফিক র্যান্ডম স্ট্রিং তৈরি করে।
-* বিভিন্ন কাজের টোকেন ম্যানেজমেন্টকে সুশৃঙ্খল ও সহজ করে তোলে।
+* **`token.ts`**
+* Manages the generation of various other random or specialized tokens within the project.
+* Facilitates the creation of unique tokens for purposes such as password resets or email verification.
+* Helps keep the codebase clean by isolating tokenhandling logic.
+* Generates cryptographically secure random strings.
+* Streamlines and simplifies the management of tokens used for various functions.

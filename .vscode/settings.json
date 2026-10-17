@@ -1,5 +1,21 @@
 {
   "prisma-smart-formatter.typescript.defaultFormatter": "esbenp.prettier-vscode",
   "prisma-smart-formatter.typescriptreact.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["Clickjacking"]
+  "cSpell.words": [
+    "Accelararate",
+    "applicationspecific",
+    "Blockchair",
+    "businesslevel",
+    "chipnet",
+    "Clickjacking",
+    "databaselevel",
+    "datafetching",
+    "errorfree",
+    "exceptionhandling",
+    "hackathon",
+    "thirdparty",
+    "tokenhandling",
+    "userfriendly",
+    "userrelated"
+  ]
 }

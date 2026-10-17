@@ -1,26 +1,25 @@
 model User {
-  id                 String             @id @default(cuid())
-  name               String
-  email              String             @unique
-  password           String
+  id               String             @id @default(cuid())
+  name             String
+  email            String             @unique
+  emailVerified    Boolean            @default(false)
+  image            String?
 
-  emailVerified      Boolean            @default(false)
-  needPasswordChange Boolean            @default(true)
-  isDeleted          Boolean            @default(false)
-  deletedAt          DateTime?
-  role               Role               @default(USER)
-  status               UserStatus        @default(ACTIVE)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  isDeleted        Boolean            @default(false)
+  deletedAt        DateTime?
+  role             Role               @default(USER)
+  status           UserStatus         @default(ACTIVE)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
 
-  accounts           Account[]
-  sessions           Session[]
+  accounts         Account[]
+  sessions         Session[]
 
-  wallets            Wallet[]
-  walletChallenges   WalletChallenge[]
-  invoices           Invoice[]
-  usages             Usage[]
-  
+  wallets          Wallet[]
+  walletChallenges WalletChallenge[]
+  invoices         Invoice[]
+  usages           Usage[]
+
   @@map("user")
 }
 
