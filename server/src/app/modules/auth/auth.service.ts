@@ -59,4 +59,30 @@ const loginUser = async (payload: { email: string; password: string }) => {
   }
 };
 
-export const AuthService = { registerUser, loginUser };
+const getMe = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      status: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(status.NOT_FOUND, "User not found.");
+  }
+  return user;
+};
+
+const logoutUser = async (sessionToken?: string) => {
+  if (sessionToken) {
+    await prisma.session.deleteMany({ where: { token: sessionToken } });
+  }
+};
+
+export const AuthService = { registerUser, loginUser, getMe, logoutUser };
