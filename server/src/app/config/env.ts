@@ -157,11 +157,3 @@ const loadEnvVariables = (): EnvConfig => {
 };
 
 export const envVars = loadEnvVariables();
-
-
-// How it works: It uses dotenv to read the 
-// .env file and custom logic instead of Zod to check
-// whether all required secrets and configurations 
-// are properly provided. If any required value is missing,
-// it prevents the server from starting and throws an error to
-// indicate the problem.

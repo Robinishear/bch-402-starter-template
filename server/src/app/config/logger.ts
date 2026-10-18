@@ -6,9 +6,3 @@ const logger =
 
 export { logger };
 
-
-// How it works: It uses the `morgan`
-// library to log HTTP requests. In production mode 
-// (`combined`), it generates detailed logs,
-// while in development mode (`dev`), it displays
-// concise and color-coded logs.
