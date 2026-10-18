@@ -43,23 +43,23 @@ export const auth = betterAuth({
     },
   },
 
-  // user creation hook to set role based on email
-  databaseHooks: {
-    user: {
-      create: {
-        before: async (user) => ({
-          data: {
-            ...user,
-            role:
-              user.email?.toLowerCase() ===
-              envVars.AUTH.ADMIN_EMAIL.toLowerCase()
-                ? "ADMIN"
-                : "USER",
-          },
-        }),
-      },
-    },
-  },
+  // // user creation hook to set role based on email
+  // databaseHooks: {
+  //   user: {
+  //     create: {
+  //       before: async (user) => ({
+  //         data: {
+  //           ...user,
+  //           role:
+  //             user.email?.toLowerCase() ===
+  //             envVars.AUTH.ADMIN_EMAIL.toLowerCase()
+  //               ? "ADMIN"
+  //               : "USER",
+  //         },
+  //       }),
+  //     },
+  //   },
+  // },
 
   session: {
     expiresIn: 60 * 60 * 24, // 1 day

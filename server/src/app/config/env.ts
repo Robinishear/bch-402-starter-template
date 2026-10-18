@@ -21,7 +21,6 @@ interface EnvConfig {
   AUTH: {
     BETTER_AUTH_SECRET: string;
     BETTER_AUTH_URL: string;
-    ADMIN_EMAIL: string;
   };
 
   OAUTH: {
@@ -60,7 +59,6 @@ const loadEnvVariables = (): EnvConfig => {
     "ACCESS_TOKEN_EXPIRES_IN",
     "REFRESH_TOKEN_EXPIRES_IN",
 
-    "ADMIN_EMAIL",
 
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
@@ -134,7 +132,6 @@ const loadEnvVariables = (): EnvConfig => {
     AUTH: {
       BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET as string,
       BETTER_AUTH_URL: process.env.BETTER_AUTH_URL as string,
-      ADMIN_EMAIL: process.env.ADMIN_EMAIL as string,
     },
 
     OAUTH: {
