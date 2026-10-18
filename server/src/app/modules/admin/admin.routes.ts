@@ -15,4 +15,12 @@ router.patch(
 );
 router.delete("/users/:id", checkAuth(Role.ADMIN), AdminController.deleteUser);
 
+
+router.get("/users", checkAuth(Role.ADMIN), AdminController.getAllUsers);
+router.get(
+  "/users/summary",
+  checkAuth(Role.ADMIN),
+  AdminController.getUserSummary,
+);
+
 export const AdminRoutes = router;
