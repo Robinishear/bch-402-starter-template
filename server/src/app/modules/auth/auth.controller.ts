@@ -5,6 +5,7 @@ import { sendResponse } from "../../shared/sendResponse";
 import { tokenUtils } from "../../utils/token";
 import { AuthService } from "./auth.service";
 import { CookieUtils } from "../../utils/cookie";
+import { envVars } from "../../config/env";
 
 const setAuthCookies = (
   res: Response,
@@ -61,4 +62,10 @@ const logout = catchAsync(async (req, res) => {
   });
 });
 
-export const AuthController = { register, login, getMe, logout };
+const socialSuccess = catchAsync(async (req, res) => {
+  const { user, token } = await AuthService.handleSocialSuccess(req.headers);
+  setAuthCookies(res, user, token);
+  res.redirect(`${envVars.FRONTEND_ORIGIN}/app`);
+});
+
+export const AuthController = { register, login, getMe, logout, socialSuccess };

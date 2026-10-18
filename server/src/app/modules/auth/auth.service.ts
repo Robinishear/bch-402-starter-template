@@ -4,6 +4,8 @@ import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import AppError from "../../error-helpers/AppError";
 import { UserStatus } from "../../../generated/prisma";
+import { fromNodeHeaders } from "better-auth/node";
+import { IncomingHttpHeaders } from "node:http";
 
 const handleAuthError = (error: unknown): never => {
   if (error instanceof APIError) {
@@ -85,4 +87,33 @@ const logoutUser = async (sessionToken?: string) => {
   }
 };
 
-export const AuthService = { registerUser, loginUser, getMe, logoutUser };
+const handleSocialSuccess = async (headers: IncomingHttpHeaders) => {
+  const session = await auth.api.getSession({
+    headers: fromNodeHeaders(headers),
+  });
+
+  if (!session) {
+    throw new AppError(
+      status.UNAUTHORIZED,
+      "Social login failed. No session found.",
+    );
+  }
+
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: session.user.id },
+  });
+
+  if (user.isDeleted || user.status !== UserStatus.ACTIVE) {
+    throw new AppError(status.FORBIDDEN, "This account is not active.");
+  }
+
+  return { user, token: session.session.token };
+};
+
+export const AuthService = {
+  registerUser,
+  loginUser,
+  getMe,
+  logoutUser,
+  handleSocialSuccess,
+};

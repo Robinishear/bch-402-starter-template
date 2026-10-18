@@ -13,5 +13,6 @@ router.post(
 router.post("/login", validateRequest(loginSchema), AuthController.login);
 router.get("/me", checkAuth(), AuthController.getMe);
 router.post("/logout", AuthController.logout);
+router.get("/social/success", AuthController.socialSuccess);
 
 export const AuthRoutes = router;
