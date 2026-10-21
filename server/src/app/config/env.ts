@@ -36,11 +36,10 @@ interface EnvConfig {
     CHAIN_API_URL: string;
     PRICE_API_URL: string;
   };
-
   AI: {
     AI_PROVIDER: "gemini" | "openai";
     GEMINI_API_KEY: string;
-    OPENAI_API_KEY: string;
+    GEMINI_MODEL: string;
   };
 }
 
@@ -72,7 +71,7 @@ const loadEnvVariables = (): EnvConfig => {
 
     "AI_PROVIDER",
     "GEMINI_API_KEY",
-    // "OPENAI_API_KEY",
+    // "GEMINI_MODEL",
   ];
 
   requiredEnvVariables.forEach((variable) => {
@@ -109,10 +108,10 @@ const loadEnvVariables = (): EnvConfig => {
     );
   }
 
-  if (aiProvider === "openai" && !process.env.OPENAI_API_KEY?.trim()) {
+  if (aiProvider === "openai" && !process.env.GEMINI_MODEL?.trim()) {
     throw new AppError(
       status.INTERNAL_SERVER_ERROR,
-      "OPENAI_API_KEY is required when AI_PROVIDER is openai.",
+      "GEMINI_MODEL is required when AI_PROVIDER is openai.",
     );
   }
 
@@ -151,7 +150,7 @@ const loadEnvVariables = (): EnvConfig => {
     AI: {
       AI_PROVIDER: aiProvider as "gemini" | "openai",
       GEMINI_API_KEY: process.env.GEMINI_API_KEY ?? "",
-      OPENAI_API_KEY: process.env.OPENAI_API_KEY ?? "",
+      GEMINI_MODEL: process.env.GEMINI_MODEL ?? "",
     },
   };
 };
