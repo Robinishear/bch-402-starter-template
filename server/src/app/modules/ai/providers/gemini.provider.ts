@@ -5,7 +5,7 @@ import AppError from "../../../error-helpers/AppError";
 import { envVars } from "../../../config/env";
 
 const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-const MAX_OUTPUT_TOKENS = 1024;
+const MAX_OUTPUT_TOKENS = 2048;
 
 type GeminiResponse = {
   candidates?: { content?: { parts?: { text?: string }[] } }[];
