@@ -1,0 +1,37 @@
+model Invoice {
+  id            String        @id @default(cuid())
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  feature       String
+  input         String
+  derivIndex    Int           @unique @default(autoincrement())
+  payAddress    String        @unique
+  priceUsdCents Int
+  amountSats    BigInt
+  status        InvoiceStatus @default(PENDING)
+  txid          String?       @unique
+  paidAt        DateTime?
+  expiresAt     DateTime
+  createdAt     DateTime      @default(now())
+  usage         Usage?
+
+  @@index([status, expiresAt])
+  @@index([userId, createdAt])
+  @@map("invoice")
+}
+
+model Usage {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Restrict)
+  invoiceId String   @unique
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
+  feature   String
+  prompt    String
+  result    String
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("usage")
+}

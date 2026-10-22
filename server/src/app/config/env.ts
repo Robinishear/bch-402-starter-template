@@ -17,6 +17,7 @@ interface EnvConfig {
   REFRESH_TOKEN_SECRET: string;
   ACCESS_TOKEN_EXPIRES_IN: string;
   REFRESH_TOKEN_EXPIRES_IN: string;
+  CHAIN_MODE: string;
 
   AUTH: {
     BETTER_AUTH_SECRET: string;
@@ -50,6 +51,8 @@ const loadEnvVariables = (): EnvConfig => {
     "DATABASE_URL",
     "FRONTEND_ORIGIN",
     // "REDIS_URL",
+    
+     "CHAIN_MODE",
 
     "BETTER_AUTH_SECRET",
     "BETTER_AUTH_URL",
@@ -127,6 +130,11 @@ const loadEnvVariables = (): EnvConfig => {
     REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET as string,
     ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
     REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
+    
+        CHAIN_MODE: process.env.CHAIN_MODE as string,
+
+    
+
 
     AUTH: {
       BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET as string,
