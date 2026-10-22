@@ -5,11 +5,8 @@ import { PROMPTS } from "../ai.prompts";
 import { AiProvider } from "../ai.types";
 import { FeatureKey } from "../../../config/pricing.config";
 
-const BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
-const MAX_OUTPUT_TOKENS = 2048;
-const ATTEMPT_TIMEOUT_MS = 45_000;
-const MAX_ATTEMPTS = 2;
-const RETRY_DELAY_MS = 1_000;
+import { ATTEMPT_TIMEOUT_MS, BASE_URL, MAX_ATTEMPTS, MAX_OUTPUT_TOKENS, RETRY_DELAY_MS } from "./gemini.constants";
+
 
 type GeminiResponse = {
   candidates?: {

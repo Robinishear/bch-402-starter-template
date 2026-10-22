@@ -5,10 +5,8 @@ import {
   FEATURE_PRICES_USD_CENTS,
   FeatureKey,
 } from "../../config/pricing.config";
+import { CACHE_TTL_MS, MAX_STALE_MS, RATE_SCALE } from "./pricing.constants";
 
-const RATE_SCALE = 6;
-const CACHE_TTL_MS = 60_000;
-const MAX_STALE_MS = 10 * 60_000;
 
 let cache: { rateScaled: bigint; fetchedAt: number } | null = null;
 let inflight: Promise<bigint> | null = null;

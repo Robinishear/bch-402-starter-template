@@ -8,10 +8,9 @@ import { AiService } from "../ai/ai.service";
 import { chain } from "../chain/chain.service";
 import { PricingService } from "../pricing/pricing.service";
 import { isFeatureKey } from "../../config/pricing.config";
+import {  toRunResult } from "./invoice.interface";
+import { INVOICE_TTL_MS, MAX_PENDING_PER_USER, TRUNCATION_NOTE } from "./invoice.constants";
 
-const INVOICE_TTL_MS = 15 * 60_000;
-const MAX_PENDING_PER_USER = 5;
-const TRUNCATION_NOTE = "\n\n(উত্তরটি দৈর্ঘ্যের সীমায় সংক্ষিপ্ত হয়েছে।)";
 
 const isUniqueViolation = (e: unknown) =>
   (e as { code?: string })?.code === "P2002";
@@ -33,14 +32,6 @@ const toPublic = (inv: Invoice) => ({
   createdAt: inv.createdAt,
 });
 
-const toRunResult = (inv: Invoice, usage: Usage) => ({
-  invoiceId: inv.id,
-  feature: usage.feature,
-  result: usage.result,
-  tokens: usage.tokens,
-  txid: inv.txid,
-  createdAt: usage.createdAt,
-});
 
 // * createInvoice 
 const createInvoice = async (

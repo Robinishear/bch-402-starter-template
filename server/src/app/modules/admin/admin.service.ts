@@ -3,19 +3,10 @@ import { Role, UserStatus } from "../../../generated/prisma";
 import AppError from "../../error-helpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IQueryParams, IQueryResult } from "../../interfaces/query.interface";
+import { userSelect } from "./admin.interface";
+import { SORTABLE_FIELDS } from "./admin.constants";
 
-const SORTABLE_FIELDS = ["createdAt", "name", "email"];
 
-const userSelect = {
-  id: true,
-  name: true,
-  email: true,
-  image: true,
-  role: true,
-  status: true,
-  emailVerified: true,
-  createdAt: true,
-};
 
 const getTargetUser = async (adminId: string, targetId: string) => {
   if (adminId === targetId) {
