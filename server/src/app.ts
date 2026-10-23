@@ -6,11 +6,13 @@ import path from "path";
 import { toNodeHandler } from "better-auth/node";
 import { cors } from "./app/config/cors";
 import { logger } from "./app/config/logger";
-import { limiter } from "./app/config/rate-limit";
 import { apiRoutes } from "./app/routes";
 import { auth } from "./app/lib/auth";
 import { notFound } from "./app/middleware/notFound";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
+import { prisma } from "./app/lib/prisma";
+import { limiter } from "./app/config/rate-limit";
+
 
 const app: Application = express();
 
@@ -18,12 +20,12 @@ app.set("query parser", (str: string) => qs.parse(str));
 app.set("view engine", "ejs");
 app.set("views", path.resolve(process.cwd(), `src/templates`));
 
-// 1) trust proxy: limiter-এর আগে
+//* trust proxy: limiter-
 if (process.env.NODE_ENV === "production") {
   app.set("trust proxy", 1);
 }
 
-// 2) Security
+//* Security
 app.use(cors);
 
 app.use(
@@ -43,16 +45,35 @@ app.use(
   }),
 );
 
+//* new add health
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({ status: "ok" });
+  } catch {
+    res.status(503).json({ status: "error" }); 
+  }
+});
+
+app.use("/api/auth", (req, res, next) => {
+  if (/^\/(sign-in|sign-up)\/email\/?$/i.test(req.path)) {
+    return res.status(404).json({ success: false, message: "Not found" });
+  }
+  next();
+});
+
 app.all("/api/auth/*splat", toNodeHandler(auth));
 
-// 4) Body parsers  middleware
+
+
+//* Body parsers  middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(logger);
 app.use(limiter);
 
-// 5) Routes
+//* Routes
 app.get("/", (_req: Request, res: Response) => {
   res.status(200).json({
     title: "Welcome to your Express app",
@@ -65,7 +86,7 @@ app.get("/", (_req: Request, res: Response) => {
 
 app.use("/api/v1", apiRoutes);
 
-// 6) Error handling: 
+//* Error handling: 
 app.use(notFound);
 app.use(globalErrorHandler);
 

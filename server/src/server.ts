@@ -2,14 +2,15 @@ import "dotenv/config";
 import { Server } from "http";
 import { app } from "./app";
 import { envVars } from "./app/config/env";
+import { startInvoiceSweeper } from "./workers/invoiceSweeper";
 
 
 let server: Server | null = null;
-
 const bootstrap = async () => {
   try {
     server = app.listen(envVars.PORT, () => {
       console.log(`Server is running on http://localhost:${envVars.PORT}`);
+      startInvoiceSweeper();
     });
   } catch (error) {
     console.error("Failed to start server:", error);

@@ -1,5 +1,7 @@
+import { InvoiceStatus } from "../../../generated/prisma";
 import { IQueryParams } from "../../interfaces/query.interface";
 import { prisma } from "../../lib/prisma";
+import { satsToBch } from "../invoice/invoice.utils";
 
 const getMyUsage = async (userId: string, query: IQueryParams) => {
   const page = Math.max(1, Number(query.page) || 1);
@@ -35,4 +37,29 @@ const getMyUsage = async (userId: string, query: IQueryParams) => {
   return { data, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } };
 };
 
-export const UsageService = { getMyUsage };
+
+const getMySummary = async (userId: string) => {
+  const [uses, spent] = await Promise.all([
+    prisma.usage.aggregate({
+      where: { userId },
+      _count: { _all: true },
+      _sum: { tokens: true },
+    }),
+    prisma.invoice.aggregate({
+      where: { userId, status: { in: [InvoiceStatus.PAID, InvoiceStatus.COMPLETED] } },
+      _count: { _all: true },
+      _sum: { amountSats: true, priceUsdCents: true },
+    }),
+  ]);
+
+  const sats = spent._sum.amountSats ?? 0n;
+  return {
+    totalUses: uses._count._all,
+    totalTokens: uses._sum.tokens ?? 0,
+    paidInvoices: spent._count._all,
+    totalSpentSats: sats.toString(),
+    totalSpentBch: satsToBch(sats),
+    totalSpentUsd: ((spent._sum.priceUsdCents ?? 0) / 100).toFixed(2),
+  };
+};
+export const UsageService = { getMyUsage, getMySummary };

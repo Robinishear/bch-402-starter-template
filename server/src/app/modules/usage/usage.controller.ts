@@ -15,4 +15,14 @@ const getMyUsage = catchAsync(async (req, res) => {
   });
 });
 
-export const UsageController = { getMyUsage };
+const getMySummary = catchAsync(async (req, res) => {
+  const data = await UsageService.getMySummary(req.user!.userId);
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Summary fetched successfully",
+    data,
+  });
+});
+
+export const UsageController = { getMyUsage, getMySummary };

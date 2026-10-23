@@ -1,11 +1,11 @@
 import status from "http-status";
-import { Role, UserStatus } from "../../../generated/prisma";
+import { InvoiceStatus, Role, UserStatus } from "../../../generated/prisma";
 import AppError from "../../error-helpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IQueryParams, IQueryResult } from "../../interfaces/query.interface";
 import { userSelect } from "./admin.interface";
 import { SORTABLE_FIELDS } from "./admin.constants";
-
+import { satsToBch } from "../invoice/invoice.utils";
 
 
 const getTargetUser = async (adminId: string, targetId: string) => {
@@ -130,9 +130,101 @@ const getUserSummary = async () => {
   return { total: active + blocked + deleted, active, blocked, deleted };
 };
 
+
+//* new
+const getAllInvoices = async (query: IQueryParams) => {
+  const page = Math.max(1, Number(query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
+
+  const where: Record<string, unknown> = {};
+
+  if (query.status) {
+    if (!Object.values(InvoiceStatus).includes(query.status as InvoiceStatus)) {
+      throw new AppError(status.BAD_REQUEST, "Invalid status filter.");
+    }
+    where.status = query.status;
+  }
+
+  if (query.searchTerm) {
+    const term = query.searchTerm;
+    where.OR = [
+      { id: { contains: term } },
+      { txid: { contains: term } },
+      { payAddress: { contains: term } },
+      { user: { email: { contains: term, mode: "insensitive" } } },
+    ];
+  }
+
+  const [rows, total] = await Promise.all([
+    prisma.invoice.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: { user: { select: { id: true, name: true, email: true } } },
+    }),
+    prisma.invoice.count({ where }),
+  ]);
+
+  const data = rows.map((i) => ({
+    id: i.id,
+    feature: i.feature,
+    status: i.status,
+    priceUsdCents: i.priceUsdCents,
+    amountSats: i.amountSats.toString(),
+    payAddress: i.payAddress,
+    txid: i.txid,
+    paidAt: i.paidAt,
+    expiresAt: i.expiresAt,
+    createdAt: i.createdAt,
+    user: i.user,
+  }));
+
+  return { data, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } };
+};
+
+const getStats = async () => {
+  const [users, invoiceGroups, revenue, usage] = await Promise.all([
+    getUserSummary(),
+    prisma.invoice.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.invoice.aggregate({
+      where: { status: { in: [InvoiceStatus.PAID, InvoiceStatus.COMPLETED] } },
+      _count: { _all: true },
+      _sum: { amountSats: true, priceUsdCents: true },
+    }),
+    prisma.usage.aggregate({ _count: { _all: true }, _sum: { tokens: true } }),
+  ]);
+
+  const countOf = (s: InvoiceStatus) =>
+    invoiceGroups.find((g) => g.status === s)?._count._all ?? 0;
+  const sats = revenue._sum.amountSats ?? 0n;
+  const cents = revenue._sum.priceUsdCents ?? 0;
+
+  return {
+    users,
+    invoices: {
+      total: invoiceGroups.reduce((n, g) => n + g._count._all, 0),
+      pending: countOf(InvoiceStatus.PENDING),
+      paid: countOf(InvoiceStatus.PAID),
+      completed: countOf(InvoiceStatus.COMPLETED),
+      expired: countOf(InvoiceStatus.EXPIRED),
+      underpaid: countOf(InvoiceStatus.UNDERPAID),
+    },
+    revenue: {
+      paidInvoices: revenue._count._all,
+      sats: sats.toString(),
+      bch: satsToBch(sats),
+      usd: (cents / 100).toFixed(2),
+    },
+    ai: { totalUses: usage._count._all, totalTokens: usage._sum.tokens ?? 0 },
+  };
+};
+
 export const AdminService = {
   updateUserStatus,
   deleteUser,
   getAllUsers,
   getUserSummary,
+  getAllInvoices,
+  getStats,
 };

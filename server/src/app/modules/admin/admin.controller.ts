@@ -52,9 +52,32 @@ const getUserSummary = catchAsync(async (_req, res) => {
   });
 });
 
+const getAllInvoices = catchAsync(async (req, res) => {
+  const result = await AdminService.getAllInvoices(req.query as IQueryParams);
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Invoices fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
+const getStats = catchAsync(async (_req, res) => {
+  const data = await AdminService.getStats();
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Stats fetched successfully",
+    data,
+  });
+});
+
 export const AdminController = {
   updateUserStatus,
   deleteUser,
   getAllUsers,
   getUserSummary,
+  getAllInvoices,
+  getStats,
 };

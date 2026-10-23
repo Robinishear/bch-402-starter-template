@@ -10,13 +10,12 @@ import { PricingService } from "../pricing/pricing.service";
 import { isFeatureKey } from "../../config/pricing.config";
 import {  toRunResult } from "./invoice.interface";
 import { INVOICE_TTL_MS, MAX_PENDING_PER_USER, TRUNCATION_NOTE } from "./invoice.constants";
+import { satsToBch } from "./invoice.utils";
 
 
 const isUniqueViolation = (e: unknown) =>
   (e as { code?: string })?.code === "P2002";
 
-const satsToBch = (sats: bigint) =>
-  `${sats / 100000000n}.${(sats % 100000000n).toString().padStart(8, "0")}`;
 
 const toPublic = (inv: Invoice) => ({
   id: inv.id,

@@ -23,4 +23,7 @@ router.get(
   AdminController.getUserSummary,
 );
 
+router.get("/invoices", checkAuth(Role.ADMIN), AdminController.getAllInvoices);
+router.get("/stats", checkAuth(Role.ADMIN), AdminController.getStats);
+
 export const AdminRoutes = router;
