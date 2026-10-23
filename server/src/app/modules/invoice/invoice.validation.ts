@@ -1,16 +1,6 @@
-import { envVars } from "../../config/env";
-import { ChainClient } from "../chain/chain.interface";
-import { mockChain } from "../chain/chain.mock";
+import { z } from "zod";
 
-const pick = (): ChainClient => {
-  if (envVars.CHAIN_MODE === "mock") {
-    if (envVars.NODE_ENV === "production") {
-      throw new Error("CHAIN_MODE=mock is not allowed in production");
-    }
-    console.warn("[chain] MOCK mode: fake addresses, no real payments");
-    return mockChain;
-  }
-  throw new Error("Real chain client is not implemented yet");
-};
-
-export const chain: ChainClient = pick();
+export const createInvoiceSchema = z.object({
+  feature: z.string().min(1),
+  input: z.string().min(1).max(2000),
+});
