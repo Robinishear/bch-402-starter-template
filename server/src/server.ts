@@ -2,10 +2,15 @@ import "dotenv/config";
 import { Server } from "http";
 import { app } from "./app";
 import { envVars } from "./app/config/env";
-import { startInvoiceSweeper } from "./workers/invoiceSweeper";
+import { prisma } from "./app/lib/prisma";
+import { startInvoiceSweeper, stopInvoiceSweeper } from "./workers/invoiceSweeper";
 
 
 let server: Server | null = null;
+let shuttingDown = false;
+
+const SHUTDOWN_TIMEOUT_MS = 100_000;
+
 const bootstrap = async () => {
   try {
     server = app.listen(envVars.PORT, () => {
@@ -17,50 +22,41 @@ const bootstrap = async () => {
   }
 };
 
-process.on("SIGTERM", () => {
-  console.log("SIGTERM signal received: closing HTTP server");
-  if (server) {
-    server.close(() => {
-      console.log("HTTP server closed");
-    });
+const shutdown = (reason: string, exitCode: number) => {
+  if (shuttingDown) {
+    console.log("Second signal: forcing exit");
+    process.exit(1);
   }
+  shuttingDown = true;
+  console.log(`${reason}: closing HTTP server`);
+  stopInvoiceSweeper();
 
-  process.exit(0);
-});
+  setTimeout(() => {
+    console.error("Forced shutdown after timeout");
+    process.exit(1);
+  }, SHUTDOWN_TIMEOUT_MS).unref();
 
-process.on("SIGINT", () => {
-  console.log("SIGINT signal received: closing HTTP server");
-  if (server) {
-    server.close(() => {
-      console.log("HTTP server closed");
-    });
-  }
+  const finish = () =>
+    prisma.$disconnect().finally(() => process.exit(exitCode));
 
-  process.exit(0);
-});
+  if (!server) return void finish();
+  server.close(() => {
+    console.log("HTTP server closed");
+    void finish();
+  });
+};
+
+process.on("SIGTERM", () => shutdown("SIGTERM received", 0));
+process.on("SIGINT", () => shutdown("SIGINT received", 0));
 
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
-
-  if (server) {
-    server.close(() => {
-      console.log("HTTP server closed due to uncaught exception");
-    });
-  }
-
-  process.exit(1);
+  shutdown("uncaughtException", 1);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("Unhandled Rejection at:", promise, "reason:", reason);
-
-  if (server) {
-    server.close(() => {
-      console.log("HTTP server closed due to unhandled rejection");
-    });
-  }
-
-  process.exit(1);
+  shutdown("unhandledRejection", 1);
 });
 
 bootstrap();
