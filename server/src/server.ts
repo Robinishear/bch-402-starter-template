@@ -4,6 +4,7 @@ import { app } from "./app";
 import { envVars } from "./app/config/env";
 import { prisma } from "./app/lib/prisma";
 import { startInvoiceSweeper, stopInvoiceSweeper } from "./workers/invoiceSweeper";
+import { startPaymentWatcher, stopPaymentWatcher } from "./workers/paymentWatcher";
 
 
 let server: Server | null = null;
@@ -16,6 +17,8 @@ const bootstrap = async () => {
     server = app.listen(envVars.PORT, () => {
       console.log(`Server is running on http://localhost:${envVars.PORT}`);
       startInvoiceSweeper();
+      startPaymentWatcher();
+
     });
   } catch (error) {
     console.error("Failed to start server:", error);
@@ -30,6 +33,8 @@ const shutdown = (reason: string, exitCode: number) => {
   shuttingDown = true;
   console.log(`${reason}: closing HTTP server`);
   stopInvoiceSweeper();
+  stopPaymentWatcher();
+
 
   setTimeout(() => {
     console.error("Forced shutdown after timeout");

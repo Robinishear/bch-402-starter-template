@@ -11,6 +11,8 @@ import { isFeatureKey } from "../../config/pricing.config";
 import {  toRunResult } from "./invoice.interface";
 import { INVOICE_TTL_MS, MAX_PENDING_PER_USER, TRUNCATION_NOTE } from "./invoice.constants";
 import { satsToBch } from "./invoice.utils";
+import { notifyInvoiceCreated } from "../../../workers/signal";
+import { mockChain } from "../chain/chain.mock";
 
 
 const isUniqueViolation = (e: unknown) =>
@@ -72,6 +74,7 @@ const createInvoice = async (
     });
   });
 
+  notifyInvoiceCreated();
   return toPublic(invoice);
 };
 
@@ -116,6 +119,25 @@ const markPaid = async (invoiceId: string, txid: string): Promise<boolean> => {
       return false;
     }
     throw e;
+  }
+};
+
+
+const markUnderpaid = async (invoiceId: string, txid: string): Promise<boolean> => {
+  const where = { id: invoiceId, status: InvoiceStatus.PENDING };
+  try {
+    const r = await prisma.invoice.updateMany({
+      where,
+      data: { status: InvoiceStatus.UNDERPAID, txid },
+    });
+    return r.count === 1;
+  } catch (e) {
+    if (!isUniqueViolation(e)) throw e;
+    const r = await prisma.invoice.updateMany({
+      where,
+      data: { status: InvoiceStatus.UNDERPAID },
+    });
+    return r.count === 1;
   }
 };
 
@@ -174,20 +196,43 @@ const run = async (userId: string, invoiceId: string) => {
 
 
 // * simulatePayment
-const simulatePayment = async (invoiceId: string) => {
+// const simulatePayment = async (invoiceId: string) => {
+//   if (envVars.CHAIN_MODE !== "mock" || envVars.NODE_ENV === "production") {
+//     throw new AppError(status.NOT_FOUND, "Not found.");
+//   }
+//   const inv = await prisma.invoice.findUnique({ where: { id: invoiceId } });
+//   if (!inv) throw new AppError(status.NOT_FOUND, "Invoice not found.");
+//   const paid = await markPaid(inv.id, `mock-tx-${randomUUID()}`);
+//   return { invoiceId: inv.id, paid };
+// };
+
+
+const simulatePayment = async (
+  invoiceId: string,
+  opts: { amountSats?: bigint; txid?: string } = {},
+) => {
   if (envVars.CHAIN_MODE !== "mock" || envVars.NODE_ENV === "production") {
     throw new AppError(status.NOT_FOUND, "Not found.");
   }
   const inv = await prisma.invoice.findUnique({ where: { id: invoiceId } });
   if (!inv) throw new AppError(status.NOT_FOUND, "Invoice not found.");
-  const paid = await markPaid(inv.id, `mock-tx-${randomUUID()}`);
-  return { invoiceId: inv.id, paid };
+
+  const sats = opts.amountSats ?? inv.amountSats;
+  const txid = mockChain.simulatePayment(inv.payAddress, sats, opts.txid);
+  return {
+    invoiceId: inv.id,
+    payAddress: inv.payAddress,
+    amountSats: sats.toString(),
+    txid,
+    note: "Added to mock chain. The watcher will pick it up within a few seconds.",
+  };
 };
 
 export const InvoiceService = {
   createInvoice,
   getInvoice,
   markPaid,
+  markUnderpaid,
   run,
   simulatePayment,
 };
