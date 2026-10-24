@@ -91,6 +91,7 @@ const tick = async () => {
 export const startPaymentWatcher = () => {
   if (!stopped) return;
   stopped = false;
+     console.log("[watcher] started");
   unsubscribe = onInvoiceCreated(kick);
   schedule(0);
 };
