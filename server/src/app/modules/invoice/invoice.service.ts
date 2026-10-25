@@ -9,34 +9,15 @@ import { chain } from "../chain/chain.service";
 import { PricingService } from "../pricing/pricing.service";
 import { isFeatureKey } from "../../config/pricing.config";
 import {  toRunResult } from "./invoice.interface";
-import { INVOICE_TTL_MS, MAX_PENDING_PER_USER, TRUNCATION_NOTE } from "./invoice.constants";
-import { satsToBch } from "./invoice.utils";
+import { INVOICE_TTL_MS, MAX_PENDING_ANONYMOUS, MAX_PENDING_PER_USER, TRUNCATION_NOTE } from "./invoice.constants";
+import { isUniqueViolation, satsToBch, toPublic } from "./invoice.utils";
 import { notifyInvoiceCreated } from "../../../workers/signal";
 import { mockChain } from "../chain/chain.mock";
 
 
-const isUniqueViolation = (e: unknown) =>
-  (e as { code?: string })?.code === "P2002";
-
-
-const toPublic = (inv: Invoice) => ({
-  id: inv.id,
-  feature: inv.feature,
-  status: inv.status,
-  payAddress: inv.payAddress,
-  priceUsdCents: inv.priceUsdCents,
-  amountSats: inv.amountSats.toString(), 
-  amountBch: satsToBch(inv.amountSats),
-  txid: inv.txid,
-  paidAt: inv.paidAt,
-  expiresAt: inv.expiresAt,
-  createdAt: inv.createdAt,
-});
-
-
 // * createInvoice 
 const createInvoice = async (
-  userId: string,
+  userId: string | null,
   payload: { feature: string; input: string },
 ) => {
   if (!isFeatureKey(payload.feature)) {
@@ -44,17 +25,29 @@ const createInvoice = async (
   }
   const input = AiService.validateInput(payload.input);
 
-  const pending = await prisma.invoice.count({
-    where: { userId, status: InvoiceStatus.PENDING, expiresAt: { gt: new Date() } },
-  });
-  if (pending >= MAX_PENDING_PER_USER) {
-    throw new AppError(
-      status.TOO_MANY_REQUESTS,
-      "Too many unpaid invoices. Please pay or wait for them to expire.",
-    );
+  if (userId) {
+    const pending = await prisma.invoice.count({
+      where: { userId, status: InvoiceStatus.PENDING, expiresAt: { gt: new Date() } },
+    });
+    if (pending >= MAX_PENDING_PER_USER) {
+      throw new AppError(
+        status.TOO_MANY_REQUESTS,
+        "Too many unpaid invoices. Please pay or wait for them to expire.",
+      );
+    }
+  } else {
+    const pending = await prisma.invoice.count({
+      where: { userId: null, status: InvoiceStatus.PENDING, expiresAt: { gt: new Date() } },
+    });
+    if (pending >= MAX_PENDING_ANONYMOUS) {
+      throw new AppError(
+        status.SERVICE_UNAVAILABLE,
+        "Service is busy. Please try again shortly.",
+      );
+    }
   }
 
-  const quote = await PricingService.quote(payload.feature); 
+  const quote = await PricingService.quote(payload.feature);
 
   const invoice = await prisma.$transaction(async (tx) => {
     const draft = await tx.invoice.create({
@@ -78,6 +71,8 @@ const createInvoice = async (
   return toPublic(invoice);
 };
 
+
+// *
 const findOwned = async (userId: string, id: string) => {
   const inv = await prisma.invoice.findFirst({
     where: { id, userId },
@@ -88,7 +83,15 @@ const findOwned = async (userId: string, id: string) => {
 };
 
 // * getInvoice
-const getInvoice = async (userId: string, id: string) => {
+const getInvoice = async (userId: string | null, id: string) => {
+
+   if (!userId) {
+    throw new AppError(
+      status.UNAUTHORIZED,
+      "Authentication required."
+    );
+  }
+
   let inv = await findOwned(userId, id);
   if (inv.status === InvoiceStatus.PENDING && inv.expiresAt <= new Date()) {
     await prisma.invoice.updateMany({
@@ -174,7 +177,16 @@ const execute = async (inv: Invoice) => {
 
 
 // * run
-const run = async (userId: string, invoiceId: string) => {
+const run = async (userId: string | null, invoiceId: string) => {
+
+  // Check whether the user is logged in
+   if (!userId) {
+    throw new AppError(
+      status.UNAUTHORIZED,
+      "Authentication required."
+    );
+  }
+
   const inv = await findOwned(userId, invoiceId);
 
   if (inv.usage) return toRunResult(inv, inv.usage); 

@@ -43,3 +43,21 @@ const limiter = rateLimit({
 });
 
 export { limiter };
+
+export const publicCreateLimiter = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 5,
+  skip: (req) => Boolean(req.header("x-invoice-id")),
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: tooMany,
+});
+
+export const publicPollLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 60,
+  skip: (req) => !req.header("x-invoice-id"),
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: tooMany,
+});
