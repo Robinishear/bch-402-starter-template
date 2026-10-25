@@ -11,7 +11,6 @@ import { PublicApiRoutes } from "../modules/public-api/public-api.routes";
 
 const router = Router();
 
-// Add your API routes here
 router.use("/auth", AuthRoutes);
 router.use("/admin", AdminRoutes);
 router.use("/pricing", PricingRoutes);

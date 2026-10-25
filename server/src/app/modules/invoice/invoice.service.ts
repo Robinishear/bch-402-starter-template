@@ -15,6 +15,8 @@ import { notifyInvoiceCreated } from "../../../workers/signal";
 import { mockChain } from "../chain/chain.mock";
 
 
+
+
 // * createInvoice 
 const createInvoice = async (
   userId: string | null,
@@ -73,7 +75,7 @@ const createInvoice = async (
 
 
 // *
-const findOwned = async (userId: string, id: string) => {
+const findOwned = async (userId: string | null, id: string) => {
   const inv = await prisma.invoice.findFirst({
     where: { id, userId },
     include: { usage: true },
@@ -82,15 +84,16 @@ const findOwned = async (userId: string, id: string) => {
   return inv;
 };
 
+
 // * getInvoice
 const getInvoice = async (userId: string | null, id: string) => {
 
-   if (!userId) {
-    throw new AppError(
-      status.UNAUTHORIZED,
-      "Authentication required."
-    );
-  }
+  //  if (!userId) {
+  //   throw new AppError(
+  //     status.UNAUTHORIZED,
+  //     "Authentication required."
+  //   );
+  // }
 
   let inv = await findOwned(userId, id);
   if (inv.status === InvoiceStatus.PENDING && inv.expiresAt <= new Date()) {
@@ -180,12 +183,12 @@ const execute = async (inv: Invoice) => {
 const run = async (userId: string | null, invoiceId: string) => {
 
   // Check whether the user is logged in
-   if (!userId) {
-    throw new AppError(
-      status.UNAUTHORIZED,
-      "Authentication required."
-    );
-  }
+  //  if (!userId) {
+  //   throw new AppError(
+  //     status.UNAUTHORIZED,
+  //     "Authentication required."
+  //   );
+  // }
 
   const inv = await findOwned(userId, invoiceId);
 
