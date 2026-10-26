@@ -7,7 +7,6 @@ const tooMany = {
   message: "Too many requests. Please try again later.",
 };
 
-// Only failed logins are counted (to prevent password guessing)
 export const loginLimiter = rateLimit({
   windowMs: 15 * 60_000,
   limit: 10,
@@ -25,7 +24,6 @@ export const registerLimiter = rateLimit({
   message: tooMany,
 });
 
-// user 
 export const createInvoiceLimiter = rateLimit({
   windowMs: 10 * 60_000,
   limit: 10,
@@ -35,14 +33,15 @@ export const createInvoiceLimiter = rateLimit({
   message: tooMany,
 });
 
-const limiter = rateLimit({
+export const limiter = rateLimit({
   windowMs: 1 * 60 * 1000,
   max: envVars.NODE_ENV === "production" ? 200 : 1000,
   standardHeaders: true,
   legacyHeaders: false,
+  message: tooMany,
+
 });
 
-export { limiter };
 
 export const publicCreateLimiter = rateLimit({
   windowMs: 10 * 60_000,
