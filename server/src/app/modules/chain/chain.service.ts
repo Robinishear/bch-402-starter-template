@@ -1,6 +1,7 @@
 import { envVars } from "../../config/env";
 import { ChainClient } from "./chain.interface";
-import { mockChain } from "./chain.mock";
+import { createRealChain } from "./chain.real";
+import { mockChain } from './chain.mock';
 
 const pick = (): ChainClient => {
   if (envVars.CHAIN_MODE === "mock") {
@@ -10,7 +11,8 @@ const pick = (): ChainClient => {
     console.warn("[chain] MOCK mode: fake addresses, no real payments");
     return mockChain;
   }
-  throw new Error("Real chain client is not implemented yet");
+  if (envVars.CHAIN_MODE === "real") return createRealChain();
+  throw new Error(`Unknown CHAIN_MODE: ${String(envVars.CHAIN_MODE)}`);
 };
 
 export const chain: ChainClient = pick();

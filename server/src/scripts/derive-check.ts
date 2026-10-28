@@ -26,35 +26,35 @@ const node = decoded.node;
 console.log("Network:", decoded.network ?? "(unknown)");
 
 const addressAt = (path: string): string => {
-const child: any = deriveHdPathRelative(node, path); 
-if (typeof child === "string") throw new Error(`${path}: ${child}`); 
-const out: any = publicKeyToP2pkhCashAddress({ publicKey: child.publicKey }); 
-const text = typeof out === "string" ? out : out?.address; 
-if (typeof text !== "string") throw new Error(`${path}: Could not generate address`); 
+const child: any = deriveHdPathRelative(node, path);
+if (typeof child === "string") throw new Error(`${path}: ${child}`);
+const out: any = publicKeyToP2pkhCashAddress({ publicKey: child.publicKey });
+const text = typeof out === "string" ? out : out?.address;
+if (typeof text !== "string") throw new Error(`${path}: Could not generate address`);
 return strip(text);
 };
 
 const SCAN = 200; const layouts = [
 { name: "A: Account-level xpub (path 0/i)", path: (i: number) => `0/${i}` },
-{ name: "B: Chain-level xpub (path i)", path: (i: number) => `${i}` },
-  { name: "C: অ্যাকাউন্ট-স্তরের xpub, change চেইন (পথ 1/i)", path: (i: number) => `1/${i}` },
+{ name: "B: Chain-level xpub (path i)", path: (i: number) => `${i}` }, 
+{ name: "C: account-level xpub, change chain (path 1/i)", path: (i: number) => `1/${i}` },
 ];
 
 let winner: string | null = null;
 
 for (const layout of layouts) {
-const derived: string[] = []; 
-for (let i = 0; i < SCAN; i++) derived.push(addressAt(layout.path(i))); 
+const derived: string[] = [];
+for (let i = 0; i < SCAN; i++) derived.push(addressAt(layout.path(i)));
 
-const found = expected.map((e) => derived.indexOf(e)); 
-const allFound = found.every((i) => i >= 0); 
+const found = expected.map((e) => derived.indexOf(e));
+const allFound = found.every((i) => i >= 0);
 
 
-console.log(`\n${layout.name}`); 
-console.log("  First 3:", derived.slice(0, 3).map((a) => a.slice(0, 14) + "...").join("  ")); 
+console.log(`\n${layout.name}`);
+console.log(" First 3:", derived.slice(0, 3).map((a) => a.slice(0, 14) + "...").join(" "));
 expected.forEach((e, k) =>
-console.log(`  Selene address ${k + 1}: ${found[k] >= 0 ? `✅ Matched, index ${found[k]}` : "❌ No match"}`),
-); 
+console.log(` Selene address ${k + 1}: ${found[k] >= 0 ? ` ✅ Matched, index ${found[k]}` : "❌ No match"}`),
+);
 if (allFound) winner = layout.name;
 
 
