@@ -61,7 +61,12 @@ export const createRealChain = (): ChainClient => {
     const url = `${baseUrl}/dashboards/addresses/${list}?limit=0,1000${keyPart}`;
 
     const res = await fetch(url, { signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
-    if (!res.ok) throw new Error(`Blockchair HTTP ${res.status}`); 
+    // if (!res.ok) throw new Error(`Blockchair HTTP ${res.status}`); 
+    if (!res.ok) {
+  const body = (await res.text().catch(() => "")).slice(0, 200);
+  throw new Error(`Blockchair HTTP ${res.status}${body ? `: ${body}` : ""}`);
+}
+
     const json: any = await res.json();
     if (json?.context?.code !== 200) {
       throw new Error(`Blockchair code ${json?.context?.code}`);

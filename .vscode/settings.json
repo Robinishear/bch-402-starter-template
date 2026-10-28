@@ -4,6 +4,8 @@
   "cSpell.words": [
     "Accelararate",
     "applicationspecific",
+    "bitauth",
+    "bitcoincash",
     "Blockchair",
     "businesslevel",
     "chipnet",
@@ -13,9 +15,14 @@
     "errorfree",
     "exceptionhandling",
     "hackathon",
+    "libauth",
     "thirdparty",
     "tokenhandling",
     "userfriendly",
-    "userrelated"
+    "userrelated",
+    "utxo",
+    "utxos",
+    "xprv",
+    "xpub"
   ]
 }
