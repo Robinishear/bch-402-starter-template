@@ -30,6 +30,7 @@
   "type": "module",
   "dependencies": {
     "@bitauth/libauth": "^3.0.0",
+    "@electrum-cash/network": "^4.4.8",
     "@google/genai": "^2.29.0",
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",

@@ -169,6 +169,9 @@ importers:
       '@bitauth/libauth':
         specifier: ^3.0.0
         version: 3.0.0
+      '@electrum-cash/network':
+        specifier: ^4.4.8
+        version: 4.4.8
       '@google/genai':
         specifier: ^2.29.0
         version: 2.29.0
@@ -398,6 +401,18 @@ packages:
   '@electric-sql/pglite@0.4.3':
     resolution: {integrity: sha512-ichuWTgtd4mOM1G4SpyGJa5trT03lWbMypDV0fUXUCXg5hiHqVAz/bZyV68NqmkLB7WcYmj1RMJVSp8HV/v/ZQ==}
 
+  '@electrum-cash/debug-logs@1.0.0':
+    resolution: {integrity: sha512-GU/CvRR9lZ0d8gy9CXGW7f//OHCIydBavv9q+JcxjGj8Xr7HwlGqHx+Wzhx9y3YmJrXfExpgClcd++gTjdEmzA==}
+
+  '@electrum-cash/network@4.4.8':
+    resolution: {integrity: sha512-fo/03qopaYdweO3JO5J2OL3gQz7fyil8NJaKg8Kid2bmF4uYulVuu9Q1W1bi4lRql5Dq9q7Z9LByShTi6pRbFg==}
+
+  '@electrum-cash/socket@4.2.0':
+    resolution: {integrity: sha512-xYqFLDc+eRTgAykAtHXOUfE6xvqfqWgTFLjSaLXwNMJ+iBH2vgZoMOH7K0uvgzdnM8TP84s64tup7TWpHkIA8w==}
+
+  '@electrum-cash/web-socket@4.2.0':
+    resolution: {integrity: sha512-Zu0jme7KUB3tT90u9YdpGUa1dX/IE4fyMTEmicpezEtxg9lXp5vGoqqvN32Ww/leJXN/ZmVHgMoXKuOeylGULQ==}
+
   '@esbuild/aix-ppc64@0.28.2':
     resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
     engines: {node: '>=18'}
@@ -575,6 +590,11 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@monsterbitar/isomorphic-ws@5.3.1':
+    resolution: {integrity: sha512-BWfWUffbg3uO4K6Cyokg9ff43lPaXAOZcCnNe1lcjCjUMDVrRAb5qEHG5qeJp3ud2SPYbORaNsls5as6SR3oig==}
+    peerDependencies:
+      ws: '*'
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
     resolution: {integrity: sha512-LCkGo6JDfaBhgST7UpPWgNgLINpcpabaHfyz5OBx75nUYxBsaEPxjnyNjWpeb/xBup/682QnBfRBy2/LvPutZQ==}
@@ -1051,6 +1071,9 @@ packages:
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
 
+  '@types/ws@8.18.2':
+    resolution: {integrity: sha512-67MQl+fpWKVTT1NYdnmo3U4sc/xPo/zQBncVnI74qmQa0z/b+1g6iYqNmGCPbxO+zz2aklb08a0oHfegiVd0/w==}
+
   '@typescript/typescript-aix-ppc64@7.0.2':
     resolution: {integrity: sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==}
     engines: {node: '>=16.20.0'}
@@ -1234,6 +1257,9 @@ packages:
   assertion-error@2.0.1:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
+
+  async-mutex@0.5.0:
+    resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
 
   aws-ssl-profiles@1.1.2:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
@@ -1598,6 +1624,9 @@ packages:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
 
+  eventemitter3@5.0.4:
+    resolution: {integrity: sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw==}
+
   expect-type@1.4.0:
     resolution: {integrity: sha512-KfYbmpRm0VbLjEvVa9yGwCi9GI34xvi7A/HXYWQO65CSD2u3MczUJSuwXKFIxlGsgBQizV9q5J9NHj4VG0n+pA==}
     engines: {node: '>=12.0.0'}
@@ -1926,6 +1955,9 @@ packages:
 
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
+
+  lossless-json@4.3.3:
+    resolution: {integrity: sha512-FGFrGArHsv7BRiYOf37ZRieT9HlKw+Kpu9HvtpYjcoOEo8lqNkjny8A2YAfWNWWQC+9pcLIrLZ+IviKJhaHwGQ==}
 
   lru.min@1.1.5:
     resolution: {integrity: sha512-5J9ysMYUpYIg9RF2vJpy9SinEmSviFSe0GyPpCQ4L5QSkLAgeLXlTAOu2ZwWUU5m+0SBl6gUU1R1ZQB3aKypfA==}
@@ -2619,6 +2651,43 @@ snapshots:
 
   '@electric-sql/pglite@0.4.3': {}
 
+  '@electrum-cash/debug-logs@1.0.0':
+    dependencies:
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  '@electrum-cash/network@4.4.8':
+    dependencies:
+      '@electrum-cash/debug-logs': 1.0.0
+      '@electrum-cash/socket': 4.2.0
+      '@electrum-cash/web-socket': 4.2.0
+      async-mutex: 0.5.0
+      debug: 4.4.3
+      eventemitter3: 5.0.4
+      lossless-json: 4.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  '@electrum-cash/socket@4.2.0': {}
+
+  '@electrum-cash/web-socket@4.2.0':
+    dependencies:
+      '@electrum-cash/debug-logs': 1.0.0
+      '@electrum-cash/socket': 4.2.0
+      '@monsterbitar/isomorphic-ws': 5.3.1(ws@8.22.0)
+      '@types/ws': 8.18.2
+      async-mutex: 0.5.0
+      eventemitter3: 5.0.4
+      lossless-json: 4.3.3
+      ws: 8.22.0
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
   '@esbuild/aix-ppc64@0.28.2':
     optional: true
 
@@ -2721,6 +2790,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
     optional: true
+
+  '@monsterbitar/isomorphic-ws@5.3.1(ws@8.22.0)':
+    dependencies:
+      ws: 8.22.0
 
   '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
     optional: true
@@ -3139,6 +3212,10 @@ snapshots:
       '@types/http-errors': 2.0.5
       '@types/node': 26.6.5
 
+  '@types/ws@8.18.2':
+    dependencies:
+      '@types/node': 26.6.5
+
   '@typescript/typescript-aix-ppc64@7.0.2':
     optional: true
 
@@ -3305,6 +3382,10 @@ snapshots:
 
   assertion-error@2.0.1:
     optional: true
+
+  async-mutex@0.5.0:
+    dependencies:
+      tslib: 2.8.1
 
   aws-ssl-profiles@1.1.2: {}
 
@@ -3621,6 +3702,8 @@ snapshots:
     optional: true
 
   etag@1.8.1: {}
+
+  eventemitter3@5.0.4: {}
 
   expect-type@1.4.0:
     optional: true
@@ -3972,6 +4055,8 @@ snapshots:
   lodash@4.18.1: {}
 
   long@5.3.2: {}
+
+  lossless-json@4.3.3: {}
 
   lru.min@1.1.5: {}
 
