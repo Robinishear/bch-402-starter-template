@@ -3,10 +3,8 @@ import { prisma } from "../app/lib/prisma";
 import { chain } from "../app/modules/chain/chain.service";
 import { InvoiceService } from "../app/modules/invoice/invoice.service";
 import { onInvoiceCreated } from "./signal";
+import { ACTIVE_INTERVAL_MS, BATCH_SIZE, IDLE_INTERVAL_MS } from "./workers.constants";
 
-const ACTIVE_INTERVAL_MS = 3_000; 
-const IDLE_INTERVAL_MS = 30_000; 
-const BATCH_SIZE = 50;
 
 let timer: NodeJS.Timeout | null = null;
 let unsubscribe: (() => void) | null = null;

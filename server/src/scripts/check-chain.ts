@@ -8,14 +8,14 @@ import { createRealChain } from "../app/modules/chain/chain.real";
 
   const t0 = Date.now();
   const found = await chain.findPaymentsToMany(addresses);
-  console.log(`\nBlockchair উত্তর দিয়েছে ${Date.now() - t0}ms-এ`);
+  console.log(`\nBlockchair responded in ${Date.now() - t0}ms`);
 
   addresses.forEach((a, i) => {
     const list = found[a] ?? [];
-    console.log(`#${i}  ${a.slice(0, 24)}…  ${list.length === 0 ? "→ কোনো পেমেন্ট নেই" : ""}`);
+    console.log(`#${i}  ${a.slice(0, 24)}…  ${list.length === 0 ? "→ No payments found" : ""}`);
     for (const p of list) {
       console.log(
-        `      tx ${p.txid.slice(0, 16)}…  ${p.valueSats} sats  নিশ্চিতকরণ: ${p.confirmations}`,
+        `      tx ${p.txid.slice(0, 16)}…  ${p.valueSats} sats  Confirmations: ${p.confirmations}`,
       );
     }
   });
