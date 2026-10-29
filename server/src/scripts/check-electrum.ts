@@ -7,6 +7,7 @@ const address = process.env.BCH_ADDRESS_0;
 if (!address) {
   throw new Error("BCH_ADDRESS_0 .env-এ নেই");
 }
+const ADDRESS: string = address;
 
 const servers = [
   "bch.imaginary.cash",
@@ -20,7 +21,7 @@ async function testServer(host: string): Promise<void> {
 
   const electrum = new ElectrumClient(
     "bch402-gateway",
-    "1.4.1",
+    "1.4.3",
     host,
   );
 
@@ -31,7 +32,7 @@ async function testServer(host: string): Promise<void> {
 
     const result = await electrum.request(
       "blockchain.address.listunspent",
-      [address],
+      ADDRESS,
     );
 
     if (result instanceof Error) {
