@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import { cookies, headers } from 'next/headers';
 import { getNewTokensWithRefreshToken } from './auth.services';
-import { isTokenExpiringSoon } from '../utils/tokenUtils';
+import { isTokenExpiringSoon } from '../utils/token';
 import { ApiResponse } from './api.types';
 
 const API_BASE_URL = process.env.BASE_URL || process.env.NEXT_PUBLIC_API_BASE_URL;

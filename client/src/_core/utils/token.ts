@@ -1,7 +1,7 @@
 "use server"
 
 import jwt, { JwtPayload } from "jsonwebtoken";
-import { setCookie } from "./cookieUtils";
+import { setCookie } from "./cookie";
 
 
 const getTokenSecondsRemaining = (token: string): number => {
