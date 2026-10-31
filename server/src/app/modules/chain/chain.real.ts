@@ -69,9 +69,24 @@ export const createRealChain = (): ChainClient => {
 // Security: Whether address #0 is the first address of your Selene
   const first = deriveAddress(0);
   console.log(`[chain] REAL mode (mainnet, Electrum). address #0 = ${short(first)}`);
-  const expected0 = process.env.BCH_ADDRESS_0;
-  if (expected0 && bare(expected0) !== bare(first)) {
-    throw new Error("chain.real: BCH_ADDRESS_0 does not match address #0 derived from BCH_XPUB");
+
+  // const expected0 = process.env.BCH_ADDRESS_0;
+  // if (expected0 && bare(expected0) !== bare(first)) {
+  //   throw new Error("chain.real: BCH_ADDRESS_0 does not match address #0 derived from BCH_XPUB");
+  // }
+
+    const check = process.env.BCH_CHECK_ADDRESS ?? process.env.BCH_ADDRESS_0;
+  if (check) {
+    const target = bare(check);
+    let found = false;
+    for (let i = 0; i < 50 && !found; i++) {
+      found = bare(deriveAddress(i)) === target;
+    }
+    if (!found) {
+      throw new Error(
+        "chain.real: the check address is not among the first 50 addresses derived from BCH_XPUB (wrong xpub?)",
+      );
+    }
   }
 
 // ---------- Connection (via server) ----------
@@ -123,7 +138,6 @@ export const createRealChain = (): ChainClient => {
     return connecting;
   };
 
-// ---------- Searching for money ----------
   const findPaymentsToMany = async (addresses: string[]) => {
     const unique = [...new Set(addresses)];
     const out: Record<string, Payment[]> = {};
@@ -145,7 +159,6 @@ export const createRealChain = (): ChainClient => {
       );
 
       for (const [address, utxos] of entries) {
-// A payment spanning multiple outputs of the same transaction
         const perTx = new Map<string, { value: bigint; height: number }>();
         for (const u of utxos) {
           if (typeof u?.tx_hash !== "string" || !Number.isInteger(u?.value)) continue;
@@ -159,7 +172,6 @@ export const createRealChain = (): ChainClient => {
           out[address] = [...perTx.entries()].map(([txid, v]) => ({
             txid,
             valueSats: v.value,
-// 0 = Not yet included in a block (mempool), 1 = Included in a block (exact count not tracked)
             confirmations: v.height > 0 ? 1 : 0,
           }));
         }

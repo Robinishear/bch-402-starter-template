@@ -18,6 +18,7 @@ interface EnvConfig {
   ACCESS_TOKEN_EXPIRES_IN: string;
   REFRESH_TOKEN_EXPIRES_IN: string;
   CHAIN_MODE: string;
+  
 
   AUTH: {
     BETTER_AUTH_SECRET: string;
