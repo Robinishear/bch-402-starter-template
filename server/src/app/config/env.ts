@@ -37,7 +37,7 @@ interface EnvConfig {
     BCH_XPUB: string;
     CHAIN_API_URL: string;
     PRICE_API_URL: string;
-    BCH_ADDRESS_0: string;
+    BCH_CHECK_ADDRESS: string;
   };
   AI: {
     AI_PROVIDER: "gemini" | "openai";
@@ -81,7 +81,7 @@ const loadEnvVariables = (): EnvConfig => {
     "BCH_XPUB",
     "CHAIN_API_URL",
     "PRICE_API_URL",
-    "BCH_ADDRESS_0",
+    "BCH_CHECK_ADDRESS",
 
     "AI_PROVIDER",
     "GEMINI_API_KEY",
@@ -170,7 +170,7 @@ const loadEnvVariables = (): EnvConfig => {
       BCH_XPUB: process.env.BCH_XPUB as string,
       CHAIN_API_URL: process.env.CHAIN_API_URL as string,
       PRICE_API_URL: process.env.PRICE_API_URL as string, 
-            BCH_ADDRESS_0: process.env.BCH_ADDRESS_0 as string, 
+      BCH_CHECK_ADDRESS: process.env.BCH_CHECK_ADDRESS as string, 
 
     },
 

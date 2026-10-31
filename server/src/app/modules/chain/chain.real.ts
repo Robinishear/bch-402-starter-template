@@ -75,7 +75,7 @@ export const createRealChain = (): ChainClient => {
   //   throw new Error("chain.real: BCH_ADDRESS_0 does not match address #0 derived from BCH_XPUB");
   // }
 
-    const check = process.env.BCH_CHECK_ADDRESS ?? process.env.BCH_ADDRESS_0;
+    const check = process.env.BCH_CHECK_ADDRESS ?? process.env.BCH_CHECK_ADDRESS;
   if (check) {
     const target = bare(check);
     let found = false;
