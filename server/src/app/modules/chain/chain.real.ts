@@ -66,6 +66,7 @@ export const createRealChain = (): ChainClient => {
     return PREFIX + bare(text);
   };
 
+  
 // Security: Whether address #0 is the first address of your Selene
   const first = deriveAddress(0);
   console.log(`[chain] REAL mode (mainnet, Electrum). address #0 = ${short(first)}`);

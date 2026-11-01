@@ -86,6 +86,7 @@ const tick = async () => {
   }
 };
 
+
 export const startPaymentWatcher = () => {
   if (!stopped) return;
   stopped = false;
