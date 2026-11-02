@@ -77,10 +77,10 @@ const createInvoice = async (
 // *
 const findOwned = async (userId: string | null, id: string) => {
 
-    console.log("[findOwned] Searching invoice:", {
-    userId,
-    invoiceId: id,
-  });
+  //   console.log("[findOwned] Searching invoice:", {
+  //   userId,
+  //   invoiceId: id,
+  // });
 
 
   const inv = await prisma.invoice.findFirst({
