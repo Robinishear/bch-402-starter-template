@@ -16,14 +16,14 @@ export const commonProtectedRoutes : RouteConfig = {
     pattern : []
 }
 
-export const adminProtectedRoutes : RouteConfig = {
-    pattern: [/^\/admin-dashboard/],
-    exact : []
-}
+export const adminProtectedRoutes: RouteConfig = {
+  pattern: [/^\/admin-dashboard(\/|$)/],
+  exact: [],
+};
 
-export const userProtectedRoutes : RouteConfig = {
-    pattern: [/^\/dashboard/ ], 
-    exact : []
+export const userProtectedRoutes: RouteConfig = {
+  pattern: [/^\/dashboard(\/|$)/],
+  exact: [],
 };
 
 export const isRouteMatches = (pathname : string, routes : RouteConfig) => {
@@ -37,18 +37,14 @@ export const getRouteOwner = (pathname : string) : "ADMIN" | "USER" | "COMMON" |
     if(isRouteMatches(pathname, adminProtectedRoutes)) {
         return "ADMIN";
     }
-    
     if(isRouteMatches(pathname, userProtectedRoutes)) {
         return "USER";
     }
-
     if(isRouteMatches(pathname, commonProtectedRoutes)) {
         return "COMMON";
     }
-
     return null; // Public route
 }
-
 
 
 export const getDefaultDashboardRoute = (role : UserRole) => {
@@ -63,17 +59,18 @@ export const getDefaultDashboardRoute = (role : UserRole) => {
 }
 
 
-export const isValidRedirectForRole = (redirectPath : string, role : UserRole) => {
-    const sanitizedRedirectPath = redirectPath.split("?")[0] || redirectPath;
-    const routeOwner = getRouteOwner(sanitizedRedirectPath);
+export const isValidRedirectForRole = (redirectPath: string, role: UserRole) => {
+  const sanitizedRedirectPath = redirectPath.split("?")[0] || redirectPath;
+  const routeOwner = getRouteOwner(sanitizedRedirectPath);
 
-    if(routeOwner === null || routeOwner === "COMMON"){
-        return true;
-    }
+  if (routeOwner === null || routeOwner === "COMMON") return true;
+  if (routeOwner === role) return true;
+  if (routeOwner === "USER" && role === "ADMIN") return true;
+  return false;
+};
 
-    if(routeOwner === role){
-        return true;
-    }
-
-    return false;
-}
+export const isSafeInternalPath = (path: string | null | undefined): path is string =>
+  typeof path === "string" && 
+   path.startsWith("/") &&
+  !path.startsWith("//") &&
+  !path.includes("\\");

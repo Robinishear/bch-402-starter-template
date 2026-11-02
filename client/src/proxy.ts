@@ -1,44 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRouteOwner, isValidRedirectForRole } from "./_core/utils/authUtils";
+import {
+  getDefaultDashboardRoute,
+  getRouteOwner,
+  isValidRedirectForRole,
+  UserRole,
+} from "./_core/utils/authUtils";
 import { jwtUtils } from "./_core/utils/jwt";
 
-export async function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get("accessToken")?.value;
+const readRole = (token?: string): UserRole | null => {
+  if (!token) return null;
+  const decoded = jwtUtils.decodedToken(token);
+  if (!decoded) return null;
+  if (typeof decoded.exp === "number" && decoded.exp * 1000 < Date.now()) return null; 
+  return decoded.role === "ADMIN" || decoded.role === "USER" ? decoded.role : null;
+};
 
+export function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl;
   const routeOwner = getRouteOwner(pathname);
+  if (!routeOwner) return NextResponse.next(); 
 
-  if (routeOwner && !accessToken) {
-    return NextResponse.redirect(new URL(`/login?next=${pathname}`, request.url));
+  const token = request.cookies.get("accessToken")?.value;
+  const role = readRole(token);
+
+  if (!role) {
+    const url = new URL("/login", request.url);
+    url.searchParams.set("next", pathname + search);
+    const response = NextResponse.redirect(url);
+    if (token) response.cookies.delete("accessToken");
+    return response;
   }
 
-  if (accessToken) {
-    const decoded = jwtUtils.decodedToken(accessToken);
-    const userRole = decoded?.role; 
-    const userStatus = decoded?.status;
-
-
-    // BLOCKED user dashboard
-    if (userStatus === "BLOCKED" && pathname.startsWith("/dashboard")) {
-      return NextResponse.redirect(new URL("/blocked", request.url));
-    }
-
-    if (routeOwner && !isValidRedirectForRole(pathname, userRole)) {
-      return NextResponse.redirect(new URL("/login", request.url)); 
-    }
-    
-    if (pathname === "/login" || pathname === "/register") {
-       return NextResponse.redirect(new URL("/", request.url));
-    }
+  if (!isValidRedirectForRole(pathname, role)) {
+    return NextResponse.redirect(new URL(getDefaultDashboardRoute(role), request.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", 
-    "/admin-dashboard/:path*",
-      "/login", 
-      "/register",
-      "/blocked"],
+  matcher: ["/dashboard/:path*", "/admin-dashboard/:path*"],
 };
