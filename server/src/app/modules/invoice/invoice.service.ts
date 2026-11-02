@@ -76,6 +76,13 @@ const createInvoice = async (
 
 // *
 const findOwned = async (userId: string | null, id: string) => {
+
+    console.log("[findOwned] Searching invoice:", {
+    userId,
+    invoiceId: id,
+  });
+
+
   const inv = await prisma.invoice.findFirst({
     where: { id, userId },
     include: { usage: true },
