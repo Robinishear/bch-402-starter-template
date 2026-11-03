@@ -13,3 +13,9 @@ export interface UserResponse {
   refreshToken?: string;
   token?: string; 
 }
+
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+}

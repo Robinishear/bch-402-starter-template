@@ -1,6 +1,6 @@
 import RegisterForm from "@/features/auth/components/RegisterForm";
 
-export default function HomePage() {
+export default function register() {
   return (
     <main>
       <h1>Hello World!</h1>

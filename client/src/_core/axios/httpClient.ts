@@ -93,6 +93,18 @@ const httpPost = async <TData>(endpoint: string, data: unknown, options?: ApiReq
     }
 }
 
+const httpPostRaw = async <TData>(endpoint: string, data: unknown, options?: ApiRequestOptions) => {
+    const instance = await axiosInstance();
+    const response = await instance.post<ApiResponse<TData>>(endpoint, data, {
+        params: options?.params,
+        headers: options?.headers,
+    });
+    return {
+        body: response.data,
+        setCookie: response.headers["set-cookie"] as string[] | undefined,
+    };
+}
+
 const httpPut = async <TData>(endpoint: string, data: unknown, options?: ApiRequestOptions): Promise<ApiResponse<TData>> => {
     try {
         const instance = await axiosInstance();
@@ -142,4 +154,5 @@ export const httpClient = {
     put: httpPut,
     patch: httpPatch,
     delete: httpDelete,
+    postRaw: httpPostRaw
 }

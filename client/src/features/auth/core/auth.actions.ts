@@ -1,12 +1,11 @@
-// src/features/auth/core/auth.actions.ts
 "use server";
 
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-import { registerUserAction, RegisterPayload } from "./auth.server"; 
+import { registerUserAction } from "./auth.server";
 import { getDefaultDashboardRoute } from "@/_core/utils/authUtils";
-import { jwtUtils } from "@/_core/utils/jwt";
+import { forwardSetCookies } from "@/_core/utils/cookie";
 import { registerValidationSchema } from "./auth.validation";
+import { RegisterPayload } from "./auth.interface";
 
 export async function handleRegister(prevState: any, formData: FormData) {
   const rawData = {
@@ -19,10 +18,10 @@ export async function handleRegister(prevState: any, formData: FormData) {
 
   if (!validatedFields.success) {
     const errorMessages = validatedFields.error.flatten().fieldErrors;
-    const firstError = 
-      errorMessages.name?.[0] || 
-      errorMessages.email?.[0] || 
-      errorMessages.password?.[0] || 
+    const firstError =
+      errorMessages.name?.[0] ||
+      errorMessages.email?.[0] ||
+      errorMessages.password?.[0] ||
       "Invalid input data";
 
     return {
@@ -35,30 +34,12 @@ export async function handleRegister(prevState: any, formData: FormData) {
 
   try {
     const payload: RegisterPayload = validatedFields.data;
-    
-    // টাইপ এরর এড়াতে পুরো রেসপন্সকে 'any' কাস্ট করা হলো
-    const response = (await registerUserAction(payload)) as any;
-   
-    const setCookieHeaders = response?.headers?.['set-cookie'];
 
-    if (setCookieHeaders) {
-      const cookieStore = await cookies();
-      
-      setCookieHeaders.forEach((cookieString: string) => {
-        const [nameValue] = cookieString.split(';');
-        const [name, value] = nameValue.split('=');
-        if (name && value) {
-          cookieStore.set(name.trim(), value.trim(), {
-            httpOnly: true,
-            path: '/',
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-          });
-        }
-      });
-    }
+    const { body, setCookie } = await registerUserAction(payload);
 
-    const responseData = (response?.data || response) as any;
+    await forwardSetCookies(setCookie);
+
+    const responseData = body as any;
     const userRole = responseData?.data?.role || responseData?.role;
 
     if (userRole) {

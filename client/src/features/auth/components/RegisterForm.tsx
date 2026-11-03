@@ -4,6 +4,7 @@
 import { useActionState, useEffect } from "react";
 import { handleRegister } from "../core/auth.actions";
 import { showErrorAlert, showSuccessAlert } from "../swal/swal_register";
+import SocialButtons from "./SocialButtons";
 
 export default function RegisterForm() {
   const [state, formAction, isPending] = useActionState(handleRegister, null);
@@ -61,6 +62,7 @@ export default function RegisterForm() {
           {isPending ? "Registering..." : "Register"}
         </button>
       </form>
+      <SocialButtons />
     </div>
   );
 }

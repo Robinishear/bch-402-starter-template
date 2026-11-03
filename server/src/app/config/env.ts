@@ -85,7 +85,7 @@ const loadEnvVariables = (): EnvConfig => {
 
     "AI_PROVIDER",
     "GEMINI_API_KEY",
-    // "GEMINI_MODEL",
+    "GEMINI_MODEL",
 
     "SMTP_HOST",
 "SMTP_PORT",
