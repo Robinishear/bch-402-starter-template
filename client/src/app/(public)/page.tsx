@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { BlazeBanner } from "./components/BlazeBanner";
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";

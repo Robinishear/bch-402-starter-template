@@ -1,37 +1,38 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
+
 import { handleLogin } from "../core/auth.actions";
 import { showErrorAlert } from "../swal/swal_register";
+import { AuthCard, FormField, SubmitButton } from "./AuthCard";
+
+const FIELDS = [
+  { name: "email", label: "Email", type: "email", placeholder: "user@example.com", autoComplete: "email" },
+  { name: "password", label: "Password", type: "password", placeholder: "••••••••", autoComplete: "current-password" },
+] as const;
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(handleLogin, null);
 
   useEffect(() => {
-    if (state && !state.success) {
-      showErrorAlert(state.message);
-    }
+    if (state && !state.success) showErrorAlert(state.message);
   }, [state]);
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-
+    <AuthCard
+      eyebrow="Welcome back"
+      title="Login to your account"
+      subtitle="Pay per request with BCH. No subscription."
+      footerText="Don't have an account?"
+      footerLabel="Register"
+      footerHref="/register"
+    >
       <form action={formAction} noValidate className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Email</label>
-          <input type="email" name="email" className="w-full px-3 py-2 border rounded-md" placeholder="user@example.com" />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
-          <input type="password" name="password" className="w-full px-3 py-2 border rounded-md" placeholder="********" />
-        </div>
-
-        <button type="submit" disabled={isPending} className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-          {isPending ? "Logging in..." : "Login"}
-        </button>
+        {FIELDS.map((field) => (
+          <FormField key={field.name} {...field} />
+        ))}
+        <SubmitButton pending={isPending} label="Login" pendingLabel="Logging in…" />
       </form>
-    </div>
+    </AuthCard>
   );
 }

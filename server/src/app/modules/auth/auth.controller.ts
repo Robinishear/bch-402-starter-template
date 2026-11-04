@@ -65,7 +65,7 @@ const logout = catchAsync(async (req, res) => {
 const socialSuccess = catchAsync(async (req, res) => {
   const { user, token } = await AuthService.handleSocialSuccess(req.headers);
   setAuthCookies(res, user, token);
-  res.redirect(`${envVars.FRONTEND_ORIGIN}/app`);
+  res.redirect(`${envVars.FRONTEND_ORIGIN}/dashboard`);
 });
 
 export const AuthController = { register, login, getMe, logout, socialSuccess };

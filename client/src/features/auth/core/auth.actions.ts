@@ -1,11 +1,13 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { loginUserAction, registerUserAction } from "./auth.server";
+import { loginUserAction, logoutUserAction, registerUserAction } from "./auth.server";
 import { getDefaultDashboardRoute } from "@/_core/utils/authUtils";
-import { forwardSetCookies } from "@/_core/utils/cookie";
+import { deleteCookie, forwardSetCookies } from "@/_core/utils/cookie";
 import { loginValidationSchema, registerValidationSchema } from "./auth.validation";
 import { RegisterPayload } from "./auth.interface";
+import { revalidatePath } from "next/dist/server/web/spec-extension/revalidate";
+import { AUTH_COOKIES, LOGOUT_TIMEOUT_MS } from "./auth.constants";
 
 export async function handleRegister(prevState: any, formData: FormData) {
   const rawData = {
@@ -98,4 +100,17 @@ export async function handleLogin(prevState: any, formData: FormData) {
   }
 
   redirect(destination);
+}
+
+//* logout action
+export async function handleLogout() {
+  await Promise.race([
+    logoutUserAction().catch(() => undefined),
+    new Promise((resolve) => setTimeout(resolve, LOGOUT_TIMEOUT_MS)),
+  ]);
+
+  await Promise.all(AUTH_COOKIES.map((name) => deleteCookie(name)));
+
+  revalidatePath('/', 'layout');
+  redirect('/login');
 }

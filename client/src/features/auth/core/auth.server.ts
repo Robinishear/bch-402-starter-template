@@ -15,3 +15,7 @@ export const loginUserAction = async (payload: LoginPayload) => {
   const { body, setCookie } = await httpClient.postRaw<UserResponse>("/auth/login", payload);
   return { body, setCookie };
 };
+
+export const logoutUserAction = async () => {
+  return httpClient.post("/auth/logout", {});
+};
