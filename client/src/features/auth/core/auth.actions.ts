@@ -1,10 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { registerUserAction } from "./auth.server";
+import { loginUserAction, registerUserAction } from "./auth.server";
 import { getDefaultDashboardRoute } from "@/_core/utils/authUtils";
 import { forwardSetCookies } from "@/_core/utils/cookie";
-import { registerValidationSchema } from "./auth.validation";
+import { loginValidationSchema, registerValidationSchema } from "./auth.validation";
 import { RegisterPayload } from "./auth.interface";
 
 export async function handleRegister(prevState: any, formData: FormData) {
@@ -46,11 +46,11 @@ export async function handleRegister(prevState: any, formData: FormData) {
       destination = getDefaultDashboardRoute(userRole);
     }
 
-    return {
-      success: true,
-      message: responseData?.message || "Registered successfully",
-      data: responseData?.data || responseData,
-    };
+    // return {
+    //   success: true,
+    //   message: responseData?.message || "Registered successfully",
+    //   data: responseData?.data || responseData,
+    // };
 
   } catch (error: any) {
     return {
@@ -59,7 +59,43 @@ export async function handleRegister(prevState: any, formData: FormData) {
     };
   }
 
-  if (destination) {
-    redirect(destination);
+  // if (destination) {
+  //   redirect(destination);
+  // }
+
+redirect(destination || "/dashboard");
+  
+}
+
+//* login action
+export async function handleLogin(prevState: any, formData: FormData) {
+  const validatedFields = loginValidationSchema.safeParse({
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  });
+
+  if (!validatedFields.success) {
+    const errors = validatedFields.error.flatten().fieldErrors;
+    return {
+      success: false,
+      message: errors.email?.[0] || errors.password?.[0] || "Invalid input data",
+    };
   }
+
+  let destination = "";
+
+  try {
+    const { body, setCookie } = await loginUserAction(validatedFields.data);
+    await forwardSetCookies(setCookie);
+
+    const role = (body as any)?.data?.role;
+    destination = getDefaultDashboardRoute(role);
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message || "Login failed",
+    };
+  }
+
+  redirect(destination);
 }

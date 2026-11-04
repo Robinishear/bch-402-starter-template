@@ -10,11 +10,18 @@ export const metadata: Metadata = {
   description: "AI Gateway Application",
 };
 
+
 export default function RootLayout({
+
+  
+
+
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <html lang="en" className={cn("font-sans", geist.variable)}>
       <body>{children}</body>

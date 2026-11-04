@@ -7,6 +7,7 @@ import { BlazeBanner } from "./components/BlazeBanner";
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";
 import { InitialLoader } from "./components/InitialLoader";
+import { WalletFlow } from "./components/WalletFlow";
 
 export default function HomePage() {
   const [contentReady, setContentReady] = useState(false);
@@ -15,7 +16,6 @@ export default function HomePage() {
     let cancelled = false;
 
     const checkPageReady = async () => {
-      // Wait until the browser finishes its initial page loading.
       if (document.readyState !== "complete") {
         await new Promise<void>((resolve) => {
           window.addEventListener("load", () => resolve(), {
@@ -24,7 +24,6 @@ export default function HomePage() {
         });
       }
 
-      // Wait for images currently rendered on the page.
       const images = Array.from(document.images);
 
       await Promise.all(
@@ -33,7 +32,6 @@ export default function HomePage() {
             try {
               await img.decode();
             } catch {
-              // Continue even if an image cannot be decoded.
             }
           } else {
             await new Promise<void>((resolve) => {
@@ -51,8 +49,7 @@ export default function HomePage() {
 
       if (cancelled) return;
 
-      // Wait 400ms. The loader's existing 600ms fade-out
-      // makes the total delay approximately 1 second.
+    
       setTimeout(() => {
         if (!cancelled) {
           setContentReady(true);
@@ -70,10 +67,11 @@ export default function HomePage() {
   return (
     <div>
       <InitialLoader contentReady={contentReady} />
-
       <BlazeBanner />
       <Hero />
       <HowItWorks />
+      <WalletFlow />
+
     </div>
   );
 }

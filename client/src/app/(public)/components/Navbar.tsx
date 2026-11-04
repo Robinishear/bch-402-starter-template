@@ -125,13 +125,19 @@ export const Navbar: React.FC = () => {
             >
               Login
             </Link>
-            <button
+            {/* <button
               type="button"
               // TODO: WizardConnect wallet connect এখানে কল করো
               className="rounded-xl bg-emerald-500 px-4 py-2 text-sm font-semibold text-black shadow-[0_0_24px_rgba(16,185,129,0.35)] transition hover:bg-emerald-400"
             >
                  Get Started
-            </button>
+            </button> */}
+             <Link
+            href="/register"
+            className="rounded-xl bg-emerald-300 px-6 py-3.5 text-sm font-semibold text-black shadow-[0_0_32px_rgba(16,185,129,0.4)] transition hover:bg-emerald-400"
+          >
+            Get Started
+          </Link>
           </div>
 
           {/* Mobile toggle */}
@@ -190,12 +196,14 @@ export const Navbar: React.FC = () => {
                 >
                   Login
                 </Link>
+
                 <Link
             href="/register"
-            className="rounded-xl bg-emerald-500 px-6 py-3.5 text-sm font-semibold text-black shadow-[0_0_32px_rgba(16,185,129,0.4)] transition hover:bg-emerald-400"
+            className="rounded-xl bg-emerald-900 px-6 py-3.5 text-sm font-semibold text-black shadow-[0_0_32px_rgba(16,185,129,0.4)] transition hover:bg-emerald-400"
           >
             Get Started
           </Link>
+
               </div>
             </div>
           </div>
