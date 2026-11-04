@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/_core/utils/utils';
 
-const BRAND = 'BCH BLAZE';
+// const BRAND = 'BCH BLAZE';
 
 const LINKS = [
   { href: '/', label: 'Home' },
@@ -14,20 +14,20 @@ const LINKS = [
   { href: '/blaze', label: 'BLAZE 2026' },
 ];
 
-function LogoMark() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
-      <defs>
-        <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32">
-          <stop stopColor="#34d399" />
-          <stop offset="1" stopColor="#0ac18e" />
-        </linearGradient>
-      </defs>
-      <rect width="32" height="32" rx="9" fill="url(#lg)" />
-      <path d="M18 5 9 18h6l-1 9 9-13h-6l1-9Z" fill="#03070a" />
-    </svg>
-  );
-}
+// function LogoMark() {
+//   return (
+//     <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden>
+//       <defs>
+//         <linearGradient id="lg" x1="0" y1="0" x2="32" y2="32">
+//           <stop stopColor="#34d399" />
+//           <stop offset="1" stopColor="#0ac18e" />
+//         </linearGradient>
+//       </defs>
+//       <rect width="32" height="32" rx="9" fill="url(#lg)" />
+//       <path d="M18 5 9 18h6l-1 9 9-13h-6l1-9Z" fill="#03070a" />
+//     </svg>
+//   );
+// }
 
 function MenuIcon({ open }: { open: boolean }) {
   const bar = 'absolute left-0 h-0.5 w-5 rounded bg-current transition-all duration-300';
@@ -119,10 +119,20 @@ export const Navbar = ({ authButtons }: { authButtons: React.ReactNode }) => {
         )}
       >
         <div className="flex h-14 items-center justify-between px-4 sm:px-5">
-          <Link href="/" className="flex items-center gap-2.5">
-            <LogoMark />
-            <span className="text-lg font-semibold tracking-tight text-white">{BRAND}</span>
-          </Link>
+          <Link href="/" className="group flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-400/25 bg-emerald-400/8 text-xl font-black text-emerald-300 shadow-[0_0_25px_rgba(16,185,129,0.08)] transition group-hover:border-emerald-300/60">
+            ₿
+          </div>
+
+          <div>
+            <h1 className="text-sm font-black tracking-[0.22em] text-white">
+              BCH <span className="text-emerald-400">BLAZE</span>
+            </h1>
+            <p className="mt-1 text-[9px] font-medium tracking-[0.25em] text-emerald-100/35">
+              BLOCKCHAIN ECOSYSTEM
+            </p>
+          </div>
+        </Link>
 
           <div className="hidden items-center gap-1 md:flex">
             {LINKS.map((l) => (
