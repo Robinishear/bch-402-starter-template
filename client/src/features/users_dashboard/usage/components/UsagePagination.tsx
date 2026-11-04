@@ -2,22 +2,25 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { cn } from "@/_core/utils/utils";
+import { buttonVariants } from "@/components/ui/button";
 import { PaginationMeta } from "../_core/usage_interface.ts";
+
+const pageBtn = cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1");
 
 function PageButton({ page, disabled, children }: { page: number; disabled: boolean; children: ReactNode }) {
   if (disabled) {
     return (
-      <Button variant="outline" size="sm" disabled>
+      <span aria-disabled className={cn(pageBtn, "pointer-events-none opacity-50")}>
         {children}
-      </Button>
+      </span>
     );
   }
 
   return (
-    <Button asChild variant="outline" size="sm">
-      <Link href={`?page=${page}`}>{children}</Link>
-    </Button>
+    <Link href={`?page=${page}`} className={pageBtn}>
+      {children}
+    </Link>
   );
 }
 

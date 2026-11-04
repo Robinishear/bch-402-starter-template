@@ -1,44 +1,68 @@
+import Link from "next/link";
+
 import { getPricing } from "@/features/users_dashboard/pricing/_core/pricing_server";
 import PricingSection from "@/features/users_dashboard/pricing/components/PricingSection";
-import { getUsageHistory, getUsageSummary } from "@/features/users_dashboard/usage/_core/usage_server";
+import { getUsageSummary } from "@/features/users_dashboard/usage/_core/usage_server";
 import StatCards from "@/features/users_dashboard/usage/components/StatCards";
-import UsageHistoryList from "@/features/users_dashboard/usage/components/UsageHistoryList";
-import UsagePagination from "@/features/users_dashboard/usage/components/UsagePagination";
+// history: import { getUsageHistory } from "@/features/users_dashboard/usage/_core/usage_server";
+// history: import UsageHistoryList from "@/features/users_dashboard/usage/components/UsageHistoryList";
+// history: import UsagePagination from "@/features/users_dashboard/usage/components/UsagePagination";
 
+// history: type Props = { searchParams: Promise<{ page?: string }> };
 
-type Props = { searchParams: Promise<{ page?: string }> };
-export default async function DashboardPage({ searchParams }: Props) {
-  const { page } = await searchParams;
-  const currentPage = Math.max(Number(page) || 1, 1);
+function LoadError() {
+  return (
+    <div className="p-6">
+      <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-6 text-sm text-red-200">
+        Could not load your dashboard. Please{" "}
+        <Link href="/login" className="font-medium underline underline-offset-4">
+          login again
+        </Link>
+        .
+      </div>
+    </div>
+  );
+}
 
-  let summary, history;
+// history: export default async function DashboardPage({ searchParams }: Props) {
+export default async function DashboardPage() {
+  // history: const { page } = await searchParams;
+  // history: const currentPage = Math.max(Number(page) || 1, 1);
+
+  let data;
   try {
-    [summary, history] = await Promise.all([
+    data = await Promise.all([
       getUsageSummary(),
-      getUsageHistory(currentPage),
+      getPricing(),
+      // history: getUsageHistory(currentPage),
     ]);
   } catch {
-    return <p className="p-6">Could not load your summary. Please login again.</p>;
+    return <LoadError />;
   }
 
-  const pricingData = await getPricing();
+  const [summary, pricingData] = data;
+  // history: const [summary, pricingData, history] = data;
 
   return (
     <div className="space-y-8 p-6">
-      <div>
-        <h1 className="text-2xl font-bold">Overview & Usage</h1>
-        <p className="mt-1 text-sm text-gray-400">Your AI requests and what each one cost.</p>
-      </div>
+      <header className="border-b border-white/10 pb-6">
+        <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          Overview{" "}
+          <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">& Usage</span>
+        </h1>
+        <p className="mt-1.5 max-w-2xl text-sm text-gray-400">Your AI requests and what each one cost.</p>
+      </header>
 
       <StatCards summary={summary} />
       <PricingSection data={pricingData} />
-      
 
+      {/* history:
       <section>
         <h2 className="mb-4 text-lg font-semibold">History</h2>
         <UsageHistoryList items={history.items} />
         <UsagePagination meta={history.meta} />
       </section>
+      */}
     </div>
   );
 }

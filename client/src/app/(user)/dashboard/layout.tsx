@@ -1,16 +1,23 @@
-import { Suspense } from 'react';
+import { BackgroundFX } from "@/app/(public)/components/BackgroundFX";
+import SidebarContent from "./components/SidebarContent";
+import MobileNav from "./components/MobileNav";
 
-import AuthButtons, { AuthButtonsSkeleton } from '@/features/auth/components/AuthButtons';
-import { BackgroundFX } from '@/app/(public)/components/BackgroundFX';
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-clip bg-[#03070a] text-gray-100 selection:bg-emerald-400/30">
+    <div className="relative min-h-screen overflow-x-clip bg-[#03070a] text-gray-100 selection:bg-emerald-400/30">
       <BackgroundFX />
 
-      <div className="relative z-10 flex flex-1 flex-col">
-       
-        <main className="flex-1">{children}</main>
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 border-r border-white/10 bg-[#04100c]/90 lg:block">
+        <SidebarContent />
+      </aside>
+
+      <div className="relative z-10 flex min-h-screen flex-col lg:pl-64">
+        <MobileNav>
+          <SidebarContent />
+        </MobileNav>
+
+        <main className="mx-auto w-full max-w-6xl flex-1">{children}</main>
       </div>
     </div>
   );

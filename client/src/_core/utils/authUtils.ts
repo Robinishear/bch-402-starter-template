@@ -65,7 +65,7 @@ export const isValidRedirectForRole = (redirectPath: string, role: UserRole) => 
 
   if (routeOwner === null || routeOwner === "COMMON") return true;
   if (routeOwner === role) return true;
-  if (routeOwner === "USER" && role === "ADMIN") return true;
+//   if (routeOwner === "USER" && role === "ADMIN") return true;
   return false;
 };
 
