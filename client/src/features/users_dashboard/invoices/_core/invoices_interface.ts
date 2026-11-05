@@ -1,6 +1,5 @@
 export type InvoiceStatus = "PENDING" | "PAID" | "COMPLETED" | "EXPIRED" | "UNDERPAID";
 
-// backend-এর invoice-এর "public" রূপ
 export interface Invoice {
   id: string;
   feature: string;
@@ -22,4 +21,22 @@ export interface CreateInvoicePayload {
 
 export type CreateInvoiceState =
   | { success: true; message: string; data: Invoice }
+  | { success: false; message: string };
+
+
+  export type GetInvoiceState =
+  | { success: true; data: Invoice }
+  | { success: false; message: string };
+
+  export interface RunResult {
+  invoiceId: string;
+  feature: string;
+  result: string;
+  tokens: number;
+  txid: string | null;
+  createdAt: string;
+}
+
+export type RunInvoiceState =
+  | { success: true; data: RunResult }
   | { success: false; message: string };

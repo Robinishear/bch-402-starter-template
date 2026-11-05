@@ -2,27 +2,50 @@
 
 import { useState, useTransition } from "react";
 
-import PromptBox from "./PromptBox";
-import { Invoice } from "../_core/invoices_interface";
-import { handleCreateInvoice } from "../_core/invoices_action";
-import PayModal from "./PayModal";
 import { PricingData } from "../../pricing/_core/pricing_interface";
 import FeatureSelect from "./FeatureSelect";
+import PromptBox from "./PromptBox";
+import ResultCard from "./ResultCard";
+import { Invoice, RunResult } from "../_core/invoices_interface";
+import { handleCreateInvoice, handleRunInvoice } from "../_core/invoices_action";
+import PayModal from "./PayModal";
 
 export default function PlaygroundForm({ pricing }: { pricing: PricingData }) {
-const [feature, setFeature] = useState(pricing.features[0]?.feature ?? "");
+  const [feature, setFeature] = useState(pricing.features[0]?.feature ?? "");
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
   const [invoice, setInvoice] = useState<Invoice | null>(null);
+  const [result, setResult] = useState<RunResult | null>(null);
+  const [running, setRunning] = useState(false);
+  const [retryId, setRetryId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const submit = () => {
     setError("");
+    setResult(null);
+    setRetryId(null);
     startTransition(async () => {
       const res = await handleCreateInvoice({ feature, input });
       if (res.success) setInvoice(res.data);
       else setError(res.message);
     });
+  };
+
+  const runAi = async (invoiceId: string) => {
+    setError("");
+    setRunning(true);
+    const res = await handleRunInvoice(invoiceId);
+    setRunning(false);
+    setInvoice(null);
+
+    if (res.success === false) {
+      setError(res.message);
+      setRetryId(invoiceId);
+      return;
+    }
+
+    setResult(res.data);
+    setRetryId(null);
   };
 
   return (
@@ -33,6 +56,17 @@ const [feature, setFeature] = useState(pricing.features[0]?.feature ?? "");
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
+      {retryId && (
+        <button
+          type="button"
+          onClick={() => runAi(retryId)}
+          disabled={running}
+          className="rounded-lg border px-4 py-2 text-sm"
+        >
+          {running ? "Running..." : "Retry (already paid)"}
+        </button>
+      )}
+
       <button
         type="button"
         onClick={submit}
@@ -42,7 +76,16 @@ const [feature, setFeature] = useState(pricing.features[0]?.feature ?? "");
         {isPending ? "Creating invoice..." : "Pay & Run"}
       </button>
 
-      {invoice && <PayModal invoice={invoice} onClose={() => setInvoice(null)} />}
+      {result && <ResultCard result={result} />}
+
+      {invoice && (
+        <PayModal
+          invoice={invoice}
+          onClose={() => setInvoice(null)}
+          onPaid={runAi}
+          running={running}
+        />
+      )}
     </div>
   );
 }

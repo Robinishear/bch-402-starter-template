@@ -1,7 +1,7 @@
 "use server";
 
-import { CreateInvoicePayload, CreateInvoiceState } from "./invoices_interface";
-import { createInvoice } from "./invoices_server";
+import { CreateInvoicePayload, CreateInvoiceState, GetInvoiceState, RunInvoiceState } from "./invoices_interface";
+import { createInvoice, getInvoice, runInvoice } from "./invoices_server";
 import { createInvoiceValidationSchema } from "./invoices_validation";
 
 
@@ -25,6 +25,30 @@ export async function handleCreateInvoice(
       success: false,
       message:
         error.response?.data?.message || error.message || "Could not create invoice",
+    };
+  }
+}
+
+export async function handleGetInvoice(id: string): Promise<GetInvoiceState> {
+  try {
+    const invoice = await getInvoice(id);
+    return { success: true, data: invoice };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message || "Could not load invoice",
+    };
+  }
+}
+
+export async function handleRunInvoice(id: string): Promise<RunInvoiceState> {
+  try {
+    const result = await runInvoice(id);
+    return { success: true, data: result };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message || "Could not run the AI",
     };
   }
 }
