@@ -1,98 +1,168 @@
 "use client";
 
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner"; 
 import { useState } from "react";
-import { IUser } from "../_core/admin.interface";
-import { handleDeleteUser, handleUpdateUserStatus } from "../_core/admin.actions";
+import { Loader2, ShieldCheck, ShieldOff, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
-interface UserManagementTableProps {
-  users: IUser[];
+import { cn } from "@/_core/utils/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { handleDeleteUser, handleUpdateUserStatus } from "../_core/admin.actions";
+import { IUser } from "../_core/admin.interface";
+
+type ActionResult = { success: boolean; message: string };
+
+const CONFIRM_TIMEOUT_MS = 3000;
+
+const headCell = "h-11 text-xs font-medium uppercase tracking-wider text-gray-500";
+const actionBtn = "h-8 gap-1.5 rounded-lg px-3 text-xs shadow-none";
+
+function StatusBadge({ status }: { status: string }) {
+  const active = status === "ACTIVE";
+
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium",
+        active
+          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+          : "border-red-500/30 bg-red-500/10 text-red-300",
+      )}
+    >
+      <span className={cn("size-1.5 rounded-full", active ? "bg-emerald-400" : "bg-red-400")} />
+      {status}
+    </Badge>
+  );
 }
 
-export function UserManagementTable({ users }: UserManagementTableProps) {
-  const [loadingId, setLoadingId] = useState<string | null>(null);
+function RoleBadge({ role }: { role: string }) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "rounded-md font-mono text-[11px] uppercase tracking-wider",
+        role === "ADMIN" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-white/10 bg-white/5 text-gray-300",
+      )}
+    >
+      {role}
+    </Badge>
+  );
+}
 
-  const handleStatusChange = async (userId: string, currentStatus: string) => {
-    const newStatus = currentStatus === "ACTIVE" ? "BLOCKED" : "ACTIVE";
-    setLoadingId(userId);
+export function UserManagementTable({ users }: { users: IUser[] }) {
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
-    const res = await handleUpdateUserStatus(userId, { status: newStatus });
-    
-    if (res.success) {
-      toast.success(res.message);
-    } else {
-      toast.error(res.message);
+  const run = async (userId: string, action: () => Promise<ActionResult>) => {
+    setPendingId(userId);
+    try {
+      const res = await action();
+      if (res.success) toast.success(res.message);
+      else toast.error(res.message);
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setPendingId(null);
+      setConfirmId(null);
     }
-    setLoadingId(null);
   };
 
-  const onDelete = async (userId: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-    setLoadingId(userId);
+  const toggleStatus = (user: IUser) => {
+    const status = user.status === "ACTIVE" ? "BLOCKED" : "ACTIVE";
+    return run(user.id, () => handleUpdateUserStatus(user.id, { status }));
+  };
 
-    const res = await handleDeleteUser(userId);
-    
-    if (res.success) {
-      toast.success(res.message);
-    } else {
-      toast.error(res.message);
-    }
-    setLoadingId(null);
+  const askDelete = (userId: string) => {
+    setConfirmId(userId);
+    setTimeout(() => setConfirmId((current) => (current === userId ? null : current)), CONFIRM_TIMEOUT_MS);
   };
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/3">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+          <TableRow className="border-white/10 hover:bg-transparent">
+            <TableHead className={headCell}>User</TableHead>
+            <TableHead className={headCell}>Role</TableHead>
+            <TableHead className={headCell}>Status</TableHead>
+            <TableHead className={cn(headCell, "text-right")}>Actions</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell className="font-medium">{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.role}</TableCell>
-              <TableCell>
-                <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"}>
-                  {user.status}
-                </Badge>
-              </TableCell>
-              <TableCell className="text-right space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  disabled={loadingId === user.id}
-                  onClick={() => handleStatusChange(user.id, user.status)}
-                >
-                  {user.status === "ACTIVE" ? "Block" : "Activate"}
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  disabled={loadingId === user.id}
-                  onClick={() => onDelete(user.id)}
-                >
-                  Delete
-                </Button>
+          {users.length === 0 ? (
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={4} className="h-28 text-center text-sm text-gray-500">
+                No users found.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            users.map((user) => {
+              const pending = pendingId === user.id;
+              const confirming = confirmId === user.id;
+              const active = user.status === "ACTIVE";
+
+              return (
+                <TableRow key={user.id} className="border-white/10 hover:bg-white/3">
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-emerald-500/25 bg-emerald-500/10 text-sm font-semibold text-emerald-300">
+                        {user.name?.charAt(0).toUpperCase() ?? "?"}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-white">{user.name}</p>
+                        <p className="truncate text-xs text-gray-500">{user.email}</p>
+                      </div>
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <RoleBadge role={user.role} />
+                  </TableCell>
+
+                  <TableCell>
+                    <StatusBadge status={user.status} />
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        disabled={pending}
+                        onClick={() => toggleStatus(user)}
+                        className={cn(
+                          actionBtn,
+                          active
+                            ? "border-white/10 bg-white/5 text-gray-200 hover:border-amber-500/40 hover:bg-amber-500/10 hover:text-amber-200"
+                            : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-emerald-200",
+                        )}
+                      >
+                        {pending ? <Loader2 className="animate-spin" /> : active ? <ShieldOff /> : <ShieldCheck />}
+                        {active ? "Block" : "Activate"}
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        disabled={pending}
+                        onClick={() => (confirming ? run(user.id, () => handleDeleteUser(user.id)) : askDelete(user.id))}
+                        className={cn(
+                          actionBtn,
+                          confirming
+                            ? "border-red-500/60 bg-red-500/20 text-red-200 hover:bg-red-500/30 hover:text-red-100"
+                            : "border-white/10 bg-white/5 text-gray-300 hover:border-red-500/40 hover:bg-red-500/10 hover:text-red-300",
+                        )}
+                      >
+                        <Trash2 />
+                        {confirming ? "Confirm?" : "Delete"}
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })
+          )}
         </TableBody>
       </Table>
     </div>

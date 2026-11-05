@@ -1,69 +1,73 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, FileText, DollarSign, ShieldAlert } from "lucide-react";
+import { FileText, Sparkles, Users, Wallet, type LucideIcon } from "lucide-react";
+
+import { cn } from "@/_core/utils/utils";
 import { IStats } from "../_core/admin.interface";
 
-interface AdminStatsCardsProps {
-  stats: IStats;
-}
+type Stat = {
+  label: string;
+  value: string;
+  sub: string;
+  icon: LucideIcon;
+  featured?: boolean;
+};
 
-export function AdminStatsCards({ stats }: AdminStatsCardsProps) {
+const formatNumber = (value: number | string) => Number(value).toLocaleString("en-US");
+
+export function AdminStatsCards({ stats }: { stats: IStats }) {
+  const items: Stat[] = [
+    {
+      label: "Total users",
+      value: formatNumber(stats.users.total),
+      sub: `${formatNumber(stats.users.active)} active · ${formatNumber(stats.users.blocked)} blocked`,
+      icon: Users,
+    },
+    {
+      label: "Invoices",
+      value: formatNumber(stats.invoices.total),
+      sub: `${formatNumber(stats.invoices.paid)} paid · ${formatNumber(stats.invoices.pending)} pending`,
+      icon: FileText,
+    },
+    {
+      label: "Revenue",
+      value: `$${stats.revenue.usd}`,
+      sub: `${formatNumber(stats.revenue.paidInvoices)} paid invoices`,
+      icon: Wallet,
+      featured: true,
+    },
+    {
+      label: "AI generations",
+      value: formatNumber(stats.ai.totalUses),
+      sub: `${formatNumber(stats.ai.totalTokens)} tokens used`,
+      icon: Sparkles,
+    },
+  ];
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {/* Total Users */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-          <Users className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.users.total}</div>
-          <p className="text-xs text-muted-foreground">
-            Active: {stats.users.active} | Blocked: {stats.users.blocked}
-          </p>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {items.map(({ label, value, sub, icon: Icon, featured }) => (
+        <div
+          key={label}
+          className={cn(
+            "relative overflow-hidden rounded-xl border p-4 transition-colors hover:border-white/20",
+            featured ? "border-emerald-500/30 bg-emerald-500/5" : "border-white/10 bg-white/3",
+          )}
+        >
+          {featured && (
+            <div
+              aria-hidden
+              className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-emerald-400/70 to-transparent"
+            />
+          )}
 
-      {/* Total Invoices */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
-          <FileText className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.invoices.total}</div>
-          <p className="text-xs text-muted-foreground">
-            Paid: {stats.invoices.paid} | Pending: {stats.invoices.pending}
-          </p>
-        </CardContent>
-      </Card>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-400">{label}</p>
+            <Icon className={cn("size-4 shrink-0", featured ? "text-emerald-300" : "text-gray-500")} />
+          </div>
 
-      {/* Total Revenue */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-          <DollarSign className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">${stats.revenue.usd}</div>
-          <p className="text-xs text-muted-foreground">
-            {stats.revenue.paidInvoices} paid invoices
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* AI Usage */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">AI Generations</CardTitle>
-          <ShieldAlert className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{stats.ai.totalUses}</div>
-          <p className="text-xs text-muted-foreground">
-            Tokens used: {stats.ai.totalTokens}
-          </p>
-        </CardContent>
-      </Card>
+          <p className="mt-3 text-2xl font-semibold tabular-nums tracking-tight text-white">{value}</p>
+          <p className="mt-1 font-mono text-xs text-gray-400">{sub}</p>
+        </div>
+      ))}
     </div>
   );
 }

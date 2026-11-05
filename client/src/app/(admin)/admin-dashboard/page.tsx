@@ -1,38 +1,42 @@
+import { AdminPageProps } from "@/features/admin_dashboard/admin/_core/admin.interface";
 import { AdminService } from "@/features/admin_dashboard/admin/_core/admin.service";
 import { AdminStatsCards } from "@/features/admin_dashboard/admin/components/AdminStatsCards";
-import { UserManagementTable } from "@/features/admin_dashboard/admin/components/InvoiceManagementTable";
+import { UserManagementTable } from "@/features/admin_dashboard/admin/components/UserManagementTable";
 
-
-interface AdminPageProps {
-  searchParams: Promise<{
-    page?: string;
-    limit?: string;
-    status?: string;
-    role?: string;
-    searchTerm?: string;
-  }>;
+function LoadError() {
+  return (
+    <div className="p-6">
+      <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-6 text-sm text-red-200">
+        Could not load the admin dashboard. Please refresh or login again.
+      </div>
+    </div>
+  );
 }
 
 export default async function AdminDashboardPage({ searchParams }: AdminPageProps) {
-  const resolvedParams = await searchParams;
+  const params = await searchParams;
 
-  const [statsData, usersResponse] = await Promise.all([
-    AdminService.getStats(),
-    AdminService.getAllUsers(resolvedParams),
-  ]);
+  const data = await Promise.all([AdminService.getStats(), AdminService.getAllUsers(params)]).catch(() => null);
+  if (!data) return <LoadError />;
+
+  const [stats, usersResponse] = data;
 
   return (
-    <div className="flex-1 space-y-6 p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
-      </div>
+    <div className="space-y-8 p-6">
+      <header className="border-b border-white/10 pb-6">
+        <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+          Admin{" "}
+          <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Dashboard</span>
+        </h1>
+        <p className="mt-1.5 max-w-2xl text-sm text-gray-400">Platform overview and user management.</p>
+      </header>
 
-      <AdminStatsCards stats={statsData} />
+      <AdminStatsCards stats={stats} />
 
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold tracking-tight">User Management</h3>
+      <section className="space-y-4">
+        <h2 className="text-lg font-semibold text-white">User management</h2>
         <UserManagementTable users={usersResponse.data} />
-      </div>
+      </section>
     </div>
   );
 }

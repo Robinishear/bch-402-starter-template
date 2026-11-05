@@ -55,3 +55,14 @@ export interface IStats {
     totalTokens: number;
   };
 }
+
+
+export interface AdminPageProps {
+  searchParams: Promise<{
+    page?: string;
+    limit?: string;
+    status?: string;
+    role?: string;
+    searchTerm?: string;
+  }>;
+}
