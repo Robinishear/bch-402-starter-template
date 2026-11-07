@@ -1,8 +1,8 @@
 import Link from "next/link";
 
-import { getPricing } from "@/features/users_dashboard/pricing/_core/pricing_server";
+import { getPricing } from "@/features/users_dashboard/pricing/_core/pricing.service";
 import PricingSection from "@/features/users_dashboard/pricing/components/PricingSection";
-import { getUsageSummary } from "@/features/users_dashboard/usage/_core/usage_server";
+import { getUsageSummary } from "@/features/users_dashboard/usage/_core/usage.service";
 import StatCards from "@/features/users_dashboard/usage/components/StatCards";
 // history: import { getUsageHistory } from "@/features/users_dashboard/usage/_core/usage_server";
 // history: import UsageHistoryList from "@/features/users_dashboard/usage/components/UsageHistoryList";

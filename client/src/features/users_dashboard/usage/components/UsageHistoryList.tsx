@@ -1,7 +1,7 @@
 import { Coins, Cpu, ExternalLink, History } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { UsageHistoryItem } from "../_core/usage_interface.ts";
+import { UsageHistoryItem } from "../_core/usage.interface.ts.js";
 
 const EXPLORER_TX_URL = "https://blockchair.com/bitcoin-cash/transaction/";
 

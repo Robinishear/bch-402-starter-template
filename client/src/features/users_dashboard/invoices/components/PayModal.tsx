@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { useInvoiceStatus } from "../hooks/useInvoiceStatus";
 import Countdown from "./Countdown";
 import QrCode from "./QrCode";
-import { Invoice } from "../_core/invoices_interface";
+import { Invoice } from "../_core/invoices.interface";
+import PayWithWalletButton from "../../wallet/components/PayWithWalletButton";
 
 interface Props {
   invoice: Invoice;
@@ -72,6 +73,15 @@ export default function PayModal({ invoice: initialInvoice, onClose, onPaid, run
               </p>
             </div>
 
+            {/*  */}
+<PayWithWalletButton
+  payAddress={invoice.payAddress}
+  amountSats={invoice.amountSats}
+  amountBch={invoice.amountBch}
+  feature={invoice.feature}
+/>
+
+<p className="text-center text-xs text-gray-400">or scan with any wallet</p>
             <QrCode address={invoice.payAddress} amountBch={invoice.amountBch} />
 
             <div>

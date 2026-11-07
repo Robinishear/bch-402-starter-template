@@ -1,4 +1,4 @@
-import { RunResult } from "../_core/invoices_interface";
+import { RunResult } from "../_core/invoices.interface";
 
 const isRealTxid = (txid: string) => /^[0-9a-f]{64}$/i.test(txid);
 

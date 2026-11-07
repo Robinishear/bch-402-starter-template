@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Invoice } from "../_core/invoices_interface";
-import { handleGetInvoice } from "../_core/invoices_action";
+import { Invoice } from "../_core/invoices.interface";
+import { handleGetInvoice } from "../_core/invoices.action";
 
 
 const POLL_MS = 3000;

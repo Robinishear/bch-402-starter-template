@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getUsageHistory } from "@/features/users_dashboard/usage/_core/usage_server";
+import { getUsageHistory } from "@/features/users_dashboard/usage/_core/usage.service";
 import UsageHistoryList from "@/features/users_dashboard/usage/components/UsageHistoryList";
 import UsagePagination from "@/features/users_dashboard/usage/components/UsagePagination";
 

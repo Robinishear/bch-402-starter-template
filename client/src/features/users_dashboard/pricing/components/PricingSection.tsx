@@ -1,6 +1,6 @@
 import { Coins } from "lucide-react";
 
-import { FeaturePricing, PricingData } from "../_core/pricing_interface";
+import { FeaturePricing, PricingData } from "../_core/pricing.interface";
 
 const formatFeatureName = (name: string) => {
   const text = name.replace(/-/g, " ");

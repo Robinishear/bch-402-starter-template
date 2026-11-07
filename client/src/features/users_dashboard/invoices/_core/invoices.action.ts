@@ -1,8 +1,8 @@
 "use server";
 
-import { CreateInvoicePayload, CreateInvoiceState, GetInvoiceState, RunInvoiceState } from "./invoices_interface";
-import { createInvoice, getInvoice, runInvoice } from "./invoices_server";
-import { createInvoiceValidationSchema } from "./invoices_validation";
+import { CreateInvoicePayload, CreateInvoiceState, GetInvoiceState, RunInvoiceState } from "./invoices.interface";
+import { createInvoice, getInvoice, runInvoice } from "./invoices.service";
+import { createInvoiceValidationSchema } from "./invoices.validation";
 
 
 export async function handleCreateInvoice(

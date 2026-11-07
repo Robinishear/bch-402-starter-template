@@ -1,4 +1,4 @@
-import { FeaturePricing } from "../../pricing/_core/pricing_interface";
+import { FeaturePricing } from "../../pricing/_core/pricing.interface";
 import PriceTag from "./PriceTag";
 
 

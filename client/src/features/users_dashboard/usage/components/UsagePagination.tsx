@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { cn } from "@/_core/utils/utils";
 import { buttonVariants } from "@/components/ui/button";
-import { PaginationMeta } from "../_core/usage_interface.ts";
+import { PaginationMeta } from "../_core/usage.interface.ts.js";
 
 const pageBtn = cn(
   buttonVariants({ variant: "outline", size: "sm" }),

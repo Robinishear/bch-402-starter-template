@@ -1,5 +1,5 @@
 import { httpClient } from "@/_core/axios/httpClient";
-import { CreateInvoicePayload, Invoice, RunResult } from "./invoices_interface";
+import { CreateInvoicePayload, Invoice, RunResult } from "./invoices.interface";
 
 export const createInvoice = async (payload: CreateInvoicePayload) => {
   const response = await httpClient.post<Invoice>("/invoices", payload);
