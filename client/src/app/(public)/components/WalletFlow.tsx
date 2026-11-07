@@ -41,9 +41,9 @@ export function WalletFlow() {
       </div>
 
       <div className="relative mt-12">
-        <div aria-hidden className="pointer-events-none absolute -inset-5 rounded-[2rem] bg-emerald-500/[0.07] blur-3xl" />
+        <div aria-hidden className="pointer-events-none absolute -inset-5 rounded-[2rem] " />
 
-        <div className="relative overflow-x-auto rounded-[28px] border border-white/9 bg-[#080d0b] p-3 shadow-[0_28px_100px_rgba(0,0,0,0.48)] sm:p-6">
+        <div className="relative overflow-x-auto rounded-[28px] border border-white/9  p-3 shadow-[0_28px_100px_rgba(0,0,0,0.48)] sm:p-6">
           <svg
             ref={ref}
             viewBox="0 0 1200 540"

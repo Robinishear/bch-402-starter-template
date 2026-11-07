@@ -166,7 +166,7 @@ export function HowItWorks() {
               <div
                 style={{ transitionDelay: `${i * 140}ms` }}
                 className={cn(
-                  'group h-full rounded-2xl border border-white/10 bg-[#050f0c]/90 p-3 transition-all duration-700 ease-out',
+                  'group h-full rounded-2xl border border-white/10  p-3 transition-all duration-700 ease-out',
                   'hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_16px_50px_-20px_rgba(16,185,129,0.5)]',
                   'motion-reduce:translate-y-0 motion-reduce:opacity-100 motion-reduce:transition-none',
                   visible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
