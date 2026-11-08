@@ -40,3 +40,9 @@ export type CreateInvoiceState =
 export type RunInvoiceState =
   | { success: true; data: RunResult }
   | { success: false; message: string };
+
+  export interface Props {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}

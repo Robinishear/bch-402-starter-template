@@ -1,7 +1,8 @@
-import { broadcastTransaction, ElectrumClient, fetchUtxos } from "./wallet.electrum";
-import { WalletCoin } from "./wallet.interface";
-import { buildPayment, deriveWalletScripts } from "./wallet.payment";
-import { PayArgs } from "./wallet.interface";
+import { publicKeyToP2pkhLockingBytecode } from "@bitauth/libauth";
+import { broadcastTransaction, ElectrumClient } from "./wizard.electrum";
+import { buildPayment } from "./wizard.payment";
+import { scanWallet } from "./wizard.scan";
+import { PayArgs } from "./wizard.interface";
 
 export interface WalletManagerLike {
   getPubkey(childIndex: number, index: bigint): Uint8Array | undefined;
@@ -31,28 +32,27 @@ export const payWithWallet = async ({
 }: PayArgs) => {
   onStep?.("looking");
 
-  const scripts = deriveWalletScripts((childIndex, index) => manager.getPubkey(childIndex, index));
-  if (scripts.length === 0) {
+  const getPubkey = (childIndex: number, index: bigint) => manager.getPubkey(childIndex, index);
+
+  if (!getPubkey(0, BigInt(0))) {
     throw new Error("Your wallet did not share its keys. Please reconnect your wallet.");
   }
-  const changeScript =
-    scripts.find((s) => s.path === "change" && s.addressIndex === 0) ?? scripts[0];
 
   const client = await ElectrumClient.connect(electrumUrl);
   try {
-    const coins: WalletCoin[] = [];
-    await Promise.all(
-      scripts.map(async (script) => {
-        const utxos = await fetchUtxos(client, script.lockingBytecode);
-        for (const utxo of utxos) coins.push({ ...script, ...utxo });
-      }),
-    );
+    const { coins, lastUsed } = await scanWallet(client, getPubkey);
+
+    const changePublicKey =
+      getPubkey(1, BigInt(lastUsed.change + 1)) ?? getPubkey(1, BigInt(0));
+    if (!changePublicKey) {
+      throw new Error("Your wallet did not share its change key. Please reconnect your wallet.");
+    }
 
     const built = buildPayment({
       coins,
       payAddress,
       amountSats: BigInt(amountSats),
-      changeLockingBytecode: changeScript.lockingBytecode,
+      changeLockingBytecode: publicKeyToP2pkhLockingBytecode({ publicKey: changePublicKey }),
     });
 
     onStep?.("confirm");

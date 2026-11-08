@@ -1,10 +1,6 @@
-interface Props {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-}
+import { Props } from "../_core/invoices.interface";
 
-const MAX = 2000;
+const MAX = 500;
 
 export default function PromptBox({ value, onChange, disabled }: Props) {
   return (

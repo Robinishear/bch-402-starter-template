@@ -1,31 +1,23 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { InsufficientFundsError, PayStep, Props } from "../_core/wallet.interface";
-import {  payWithWallet } from "../_core/wallet.pay";
-import { useWallet } from "./WalletProvider";
+import { InsufficientFundsError, PayStep, Props } from "../_core/wizard.interface";
+import {  payWithWallet } from "../_core/wizard.pay";
+import { useWallet, useWalletOptional } from "./WalletProvider";
+import { toMessage } from "../_core/pay_fun";
 
-
-const satsToBch = (sats: bigint) => (Number(sats) / 1e8).toFixed(8);
-
-const toMessage = (error: unknown) => {
-  if (error instanceof InsufficientFundsError) {
-    return `Not enough BCH in your wallet. Needed about ${satsToBch(error.requiredSats)} BCH, found ${satsToBch(error.availableSats)} BCH.`;
-  }
-  if (error instanceof DOMException && error.name === "AbortError") {
-    return "Payment cancelled.";
-  }
-  if (error instanceof Error) return error.message;
-  return "Something went wrong. You can still pay with the QR code below.";
-};
 
 export default function PayWithWalletButton({ payAddress, amountSats, amountBch, feature }: Props) {
-  const wallet = useWallet();
+  const wallet = useWalletOptional();
   const [step, setStep] = useState<PayStep | "idle">("idle");
   const [error, setError] = useState("");
   const controller = useRef<AbortController | null>(null);
 
+
   useEffect(() => () => controller.current?.abort("closed"), []);
+
+    if (!wallet) return null;
+
 
   if (wallet.state !== "connected" || !wallet.manager) {
     return (

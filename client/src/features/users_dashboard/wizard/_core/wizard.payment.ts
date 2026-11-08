@@ -12,38 +12,33 @@ import {
   WalletCoin,
   WalletPath,
   WalletScript,
-} from "./wallet.interface";
+} from "./wizard.interface";
+import { DUST_SATS, FEE_RATE, INPUT_BYTES, OUTPUT_BYTES, OVERHEAD_BYTES } from "./wizard.constants";
 
 const CHILD_INDEX: Record<WalletPath, number> = { receive: 0, change: 1 };
 
-export const SCAN_WINDOW = 20; 
-export const DUST_SATS = BigInt(546);
-const FEE_RATE = 1.1;  
-const INPUT_BYTES = 150;
-const OUTPUT_BYTES = 34; 
-const OVERHEAD_BYTES = 10;
 
 export const estimateFee = (inputs: number, outputs: number) =>
   BigInt(Math.ceil((OVERHEAD_BYTES + INPUT_BYTES * inputs + OUTPUT_BYTES * outputs) * FEE_RATE));
 
-export const deriveWalletScripts = (
-  getPubkey: (childIndex: number, index: bigint) => Uint8Array | undefined,
-  window = SCAN_WINDOW,
-): WalletScript[] => {
-  const scripts: WalletScript[] = [];
-  for (const path of ["receive", "change"] as WalletPath[]) {
-    for (let i = 0; i < window; i++) {
-      const publicKey = getPubkey(CHILD_INDEX[path], BigInt(i));
-      if (!publicKey) continue;
-      scripts.push({
-        path,
-        addressIndex: i,
-        lockingBytecode: publicKeyToP2pkhLockingBytecode({ publicKey }),
-      });
-    }
-  }
-  return scripts;
-};
+// export const deriveWalletScripts = (
+//   getPubkey: (childIndex: number, index: bigint) => Uint8Array | undefined,
+//   window = SCAN_WINDOW,
+// ): WalletScript[] => {
+//   const scripts: WalletScript[] = [];
+//   for (const path of ["receive", "change"] as WalletPath[]) {
+//     for (let i = 0; i < window; i++) {
+//       const publicKey = getPubkey(CHILD_INDEX[path], BigInt(i));
+//       if (!publicKey) continue;
+//       scripts.push({
+//         path,
+//         addressIndex: i,
+//         lockingBytecode: publicKeyToP2pkhLockingBytecode({ publicKey }),
+//       });
+//     }
+//   }
+//   return scripts;
+// };
 
 export const payAddressToLockingBytecode = (payAddress: string) => {
   const address = payAddress.includes(":") ? payAddress : `bitcoincash:${payAddress}`;
@@ -81,7 +76,7 @@ export const buildPayment = ({
   const rawChange = pickedTotal - amountSats - feeWithChange;
   const hasChange = rawChange >= DUST_SATS;
   const changeSats = hasChange ? rawChange : BigInt(0);
-  const feeSats = hasChange ? feeWithChange : pickedTotal - amountSats; // dust change fee-তে যায়
+  const feeSats = hasChange ? feeWithChange : pickedTotal - amountSats; 
 
   const outputs = [{ lockingBytecode: payLockingBytecode, valueSatoshis: amountSats }];
   if (hasChange) outputs.push({ lockingBytecode: changeLockingBytecode, valueSatoshis: changeSats });

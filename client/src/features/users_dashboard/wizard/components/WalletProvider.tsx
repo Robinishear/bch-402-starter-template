@@ -20,3 +20,7 @@ export function useWallet() {
   }
   return context;
 }
+
+export function useWalletOptional() {
+  return useContext(WalletContext);
+}

@@ -1,8 +1,6 @@
 import { binToHex } from "@bitauth/libauth";
-import { Pending, RawUtxo, Utxo } from "./wallet.interface";
-
-export const ELECTRUM_WS_URL =
-  process.env.NEXT_PUBLIC_ELECTRUM_WS_URL ?? "wss://bch.imaginary.cash:50004";
+import { Pending, RawUtxo, Utxo } from "./wizard.interface";
+import { ELECTRUM_WS_URL } from "./wizard.constants";
 
 
 export class ElectrumClient {

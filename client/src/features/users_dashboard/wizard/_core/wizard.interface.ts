@@ -1,4 +1,4 @@
-import { WalletManagerLike } from "./wallet.pay";
+import { WalletManagerLike } from "./wizard.pay";
 
 export type WalletPath = "receive" | "change";
 

@@ -5,7 +5,7 @@ import { useInvoiceStatus } from "../hooks/useInvoiceStatus";
 import Countdown from "./Countdown";
 import QrCode from "./QrCode";
 import { Invoice } from "../_core/invoices.interface";
-import PayWithWalletButton from "../../wallet/components/PayWithWalletButton";
+import PayWithWalletButton from "../../wizard/components/PayWithWalletButton";
 
 interface Props {
   invoice: Invoice;
@@ -19,7 +19,6 @@ export default function PayModal({ invoice: initialInvoice, onClose, onPaid, run
   const [copied, setCopied] = useState(false);
   const notified = useRef(false);
 
-  // পেমেন্ট ধরা পড়লে একবারই জানানো হয়
   useEffect(() => {
     if (invoice.status === "PAID" && !notified.current) {
       notified.current = true;

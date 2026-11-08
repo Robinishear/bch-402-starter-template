@@ -6,5 +6,5 @@ export const createInvoiceValidationSchema = z.object({
     .string()
     .trim()
     .min(1, "Please enter some text")
-    .max(2000, "Text must be 2000 characters or less"),
+    .max(500, "Text must be 500 characters or less"),
 });
