@@ -16,7 +16,7 @@ type ActionResult = { success: boolean; message: string };
 const CONFIRM_TIMEOUT_MS = 3000;
 
 const headCell = "h-11 text-xs font-medium uppercase tracking-wider text-gray-500";
-const actionBtn = "h-8 gap-1.5 rounded-lg px-3 text-xs shadow-none";
+const actionBtn = "h-8 gap-1.5 rounded-lg px-3 text-xs shadow-none transition-colors";
 
 function StatusBadge({ status }: { status: string }) {
   const active = status === "ACTIVE";
@@ -43,7 +43,9 @@ function RoleBadge({ role }: { role: string }) {
       variant="outline"
       className={cn(
         "rounded-md font-mono text-[11px] uppercase tracking-wider",
-        role === "ADMIN" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-white/10 bg-white/5 text-gray-300",
+        role === "ADMIN"
+          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+          : "border-white/10 bg-white/5 text-gray-300",
       )}
     >
       {role}
@@ -80,10 +82,10 @@ export function UserManagementTable({ users }: { users: IUser[] }) {
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/3">
+    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/3 shadow-[0_0_0_1px_rgba(255,255,255,0.02),0_8px_30px_-12px_rgba(0,0,0,0.6)]">
       <Table>
         <TableHeader>
-          <TableRow className="border-white/10 hover:bg-transparent">
+          <TableRow className="border-white/10 bg-white/3 hover:bg-white/3">
             <TableHead className={headCell}>User</TableHead>
             <TableHead className={headCell}>Role</TableHead>
             <TableHead className={headCell}>Status</TableHead>
@@ -105,10 +107,10 @@ export function UserManagementTable({ users }: { users: IUser[] }) {
               const active = user.status === "ACTIVE";
 
               return (
-                <TableRow key={user.id} className="border-white/10 hover:bg-white/3">
+                <TableRow key={user.id} className="border-white/5 transition-colors hover:bg-emerald-500/4">
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-emerald-500/25 bg-emerald-500/10 text-sm font-semibold text-emerald-300">
+                      <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-emerald-500/25 bg-linear-to-br from-emerald-500/20 to-emerald-500/5 text-sm font-semibold text-emerald-300 ring-2 ring-emerald-500/5">
                         {user.name?.charAt(0).toUpperCase() ?? "?"}
                       </span>
                       <div className="min-w-0">

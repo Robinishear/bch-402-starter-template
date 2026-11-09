@@ -64,5 +64,24 @@ export interface AdminPageProps {
     status?: string;
     role?: string;
     searchTerm?: string;
+        days?: string; 
   }>;
+}
+
+
+export interface IAnalyticsPoint {
+  date: string; 
+  users: number;
+  invoices: number;
+  paidInvoices: number;
+  revenueUsd: number;
+  aiUses: number;
+  aiTokens: number;
+  
+}
+
+export interface IAnalytics {
+  range: { days: number; from: string; to: string };
+  totals: IStats;
+  series: IAnalyticsPoint[];
 }

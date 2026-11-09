@@ -73,6 +73,16 @@ const getStats = catchAsync(async (_req, res) => {
   });
 });
 
+const getAnalytics = catchAsync(async (req, res) => {
+  const data = await AdminService.getAnalytics(req.query.days);
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Analytics fetched successfully",
+    data,
+  });
+});
+
 export const AdminController = {
   updateUserStatus,
   deleteUser,
@@ -80,4 +90,5 @@ export const AdminController = {
   getUserSummary,
   getAllInvoices,
   getStats,
+  getAnalytics,
 };

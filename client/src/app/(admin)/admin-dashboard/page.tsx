@@ -1,7 +1,12 @@
 import { AdminPageProps } from "@/features/admin_dashboard/admin/_core/admin.interface";
 import { AdminService } from "@/features/admin_dashboard/admin/_core/admin.service";
 import { AdminStatsCards } from "@/features/admin_dashboard/admin/components/AdminStatsCards";
+import { AnalyticsChart } from "@/features/admin_dashboard/admin/components/AnalyticsChart";
+import Pagination from "@/features/admin_dashboard/admin/components/Pagination";
+import { PaginationProvider, TableLoading } from "@/features/admin_dashboard/admin/components/pagination-provider";
 import { UserManagementTable } from "@/features/admin_dashboard/admin/components/UserManagementTable";
+
+const RANGE_OPTIONS = [7, 30, 90];
 
 function LoadError() {
   return (
@@ -16,26 +21,34 @@ function LoadError() {
 export default async function AdminDashboardPage({ searchParams }: AdminPageProps) {
   const params = await searchParams;
 
-  const data = await Promise.all([AdminService.getStats(), AdminService.getAllUsers(params)]).catch(() => null);
+  const daysParam = Number(Array.isArray(params.days) ? params.days[0] : params.days);
+  const days = RANGE_OPTIONS.includes(daysParam) ? daysParam : 30;
+
+  const data = await Promise.all([AdminService.getAnalytics(days), AdminService.getAllUsers(params)]).catch(() => null);
   if (!data) return <LoadError />;
 
-  const [stats, usersResponse] = data;
+  const [analytics, usersResponse] = data;
 
   return (
     <div className="space-y-8 p-6">
       <header className="border-b border-white/10 pb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Admin{" "}
-          <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Dashboard</span>
+          User{" "}
+          <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">Management</span>
         </h1>
         <p className="mt-1.5 max-w-2xl text-sm text-gray-400">Platform overview and user management.</p>
       </header>
 
-      <AdminStatsCards stats={stats} />
+      <AdminStatsCards stats={analytics.totals} />
+      <AnalyticsChart analytics={analytics} />
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-white">User management</h2>
-        <UserManagementTable users={usersResponse.data} />
+        <PaginationProvider>
+          <TableLoading>
+            <UserManagementTable users={usersResponse.data} />
+          </TableLoading>
+          <Pagination meta={usersResponse.meta} searchParams={params} />
+        </PaginationProvider>
       </section>
     </div>
   );

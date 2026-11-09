@@ -57,3 +57,15 @@ export async function handleDeleteUser(userId: string): Promise<AdminActionState
     };
   }
 }
+
+// export async function handleGetAnalytics(days: number = 30): Promise<AdminActionState> {
+//   try {
+//     const data = await AdminService.getAnalytics(days);
+//     return { success: true, message: "Analytics fetched successfully", data };
+//   } catch (error: any) {
+//     return {
+//       success: false,
+//       message: error.response?.data?.message || error.message || "Could not load analytics",
+//     };
+//   }
+// }

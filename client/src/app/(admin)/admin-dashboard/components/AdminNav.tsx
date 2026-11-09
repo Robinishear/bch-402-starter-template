@@ -8,11 +8,10 @@ import { cn } from "@/_core/utils/utils";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; exact?: boolean };
 
-// Overview holds everything; add or remove the other pages here
 const NAV: NavItem[] = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/invoices", label: "Invoices", icon: FileText },
+  { href: "/admin-dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
+  // { href: "/admin-dashboard/users", label: "Users", icon: Users },
+  { href: "/admin-dashboard/invoices", label: "Invoices", icon: FileText },
 ];
 
 export default function AdminNav() {

@@ -1,5 +1,5 @@
 import { httpClient } from "@/_core/axios/httpClient";
-import { IInvoice, IStats, IUser, IUserSummary } from "./admin.interface";
+import { IAnalytics, IInvoice, IStats, IUser, IUserSummary } from "./admin.interface";
 
 
 export const AdminService = {
@@ -9,7 +9,7 @@ export const AdminService = {
   },
 
   async deleteUser(userId: string): Promise<IUser> {
-    const response = await httpClient.delete<IUser>(`/users/${userId}`);
+    const response = await httpClient.delete<IUser>(`/admin/users/${userId}`);
     return response.data;
   },
 
@@ -30,6 +30,11 @@ export const AdminService = {
 
   async getStats(): Promise<IStats> {
     const response = await httpClient.get<IStats>("/admin/stats");
+    return response.data;
+  },
+
+    async getAnalytics(days: number = 30): Promise<IAnalytics> {
+    const response = await httpClient.get<IAnalytics>("/admin/analytics", { params: { days } });
     return response.data;
   },
 };

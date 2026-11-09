@@ -26,4 +26,5 @@ router.get(
 router.get("/invoices", checkAuth(Role.ADMIN), AdminController.getAllInvoices);
 router.get("/stats", checkAuth(Role.ADMIN), AdminController.getStats);
 
+router.get("/analytics", checkAuth(Role.ADMIN), AdminController.getAnalytics);
 export const AdminRoutes = router;

@@ -3,8 +3,8 @@ import { InvoiceStatus, Role, UserStatus } from "../../../generated/prisma";
 import AppError from "../../error-helpers/AppError";
 import { prisma } from "../../lib/prisma";
 import { IQueryParams, IQueryResult } from "../../interfaces/query.interface";
-import { userSelect } from "./admin.interface";
-import { SORTABLE_FIELDS } from "./admin.constants";
+import { AnalyticsPoint, userSelect } from "./admin.interface";
+import { DAY_MS, dayKey, SORTABLE_FIELDS } from "./admin.constants";
 import { satsToBch } from "../invoice/invoice.utils";
 
 
@@ -62,9 +62,10 @@ const deleteUser = async (adminId: string, targetId: string) => {
   });
 };
 
+//* getAllUsers 
 const getAllUsers = async (query: IQueryParams) => {
   const page = Math.max(1, Number(query.page) || 1);
-  const limit = Math.min(100, Math.max(1, Number(query.limit) || 10));
+  const limit = Math.min(100, Math.max(1, Number(query.limit) || 7));
   const skip = (page - 1) * limit;
 
   const sortBy = SORTABLE_FIELDS.includes(query.sortBy ?? "")
@@ -115,6 +116,7 @@ const getAllUsers = async (query: IQueryParams) => {
   return result;
 };
 
+//* getUserSummary
 const getUserSummary = async () => {
   const grouped = await prisma.user.groupBy({
     by: ["status"],
@@ -220,6 +222,88 @@ const getStats = async () => {
   };
 };
 
+
+//* getAnalytics
+const getAnalytics = async (daysParam: unknown) => {
+  const days = Math.min(365, Math.max(1, Number(daysParam) || 30));
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  const from = new Date(today.getTime() - (days - 1) * DAY_MS);
+
+  const [totals, users, invoices, paidInvoices, usages] = await Promise.all([
+    getStats(),
+    prisma.user.findMany({
+      where: { createdAt: { gte: from } },
+      select: { createdAt: true },
+    }),
+    prisma.invoice.findMany({
+      where: { createdAt: { gte: from } },
+      select: { createdAt: true },
+    }),
+    prisma.invoice.findMany({
+      where: {
+        paidAt: { gte: from },
+        status: { in: [InvoiceStatus.PAID, InvoiceStatus.COMPLETED] },
+      },
+      select: { paidAt: true, priceUsdCents: true },
+    }),
+    prisma.usage.findMany({
+      where: { createdAt: { gte: from } },
+      select: { createdAt: true, tokens: true },
+    }),
+  ]);
+
+  const buckets = new Map<string, AnalyticsPoint & { cents: number }>();
+  for (let i = 0; i < days; i++) {
+    const date = dayKey(new Date(from.getTime() + i * DAY_MS));
+    buckets.set(date, {
+      date,
+      users: 0,
+      invoices: 0,
+      paidInvoices: 0,
+      revenueUsd: 0,
+      aiUses: 0,
+      aiTokens: 0,
+      cents: 0,
+    });
+  }
+
+  for (const u of users) {
+    const b = buckets.get(dayKey(u.createdAt));
+    if (b) b.users++;
+  }
+  for (const i of invoices) {
+    const b = buckets.get(dayKey(i.createdAt));
+    if (b) b.invoices++;
+  }
+  for (const i of paidInvoices) {
+    if (!i.paidAt) continue;
+    const b = buckets.get(dayKey(i.paidAt));
+    if (b) {
+      b.paidInvoices++;
+      b.cents += i.priceUsdCents;
+    }
+  }
+  for (const u of usages) {
+    const b = buckets.get(dayKey(u.createdAt));
+    if (b) {
+      b.aiUses++;
+      b.aiTokens += u.tokens ?? 0;
+    }
+  }
+
+  const series: AnalyticsPoint[] = Array.from(buckets.values()).map(
+    ({ cents, ...point }) => ({ ...point, revenueUsd: cents / 100 }),
+  );
+
+  return {
+    range: { days, from: dayKey(from), to: dayKey(today) },
+    totals,
+    series,
+  };
+};
+
 export const AdminService = {
   updateUserStatus,
   deleteUser,
@@ -227,4 +311,5 @@ export const AdminService = {
   getUserSummary,
   getAllInvoices,
   getStats,
+  getAnalytics,
 };
