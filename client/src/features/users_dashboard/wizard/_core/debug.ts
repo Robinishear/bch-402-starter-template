@@ -15,6 +15,7 @@
 
 //   const client = await ElectrumClient.connect();
 
+
 //   try {
 //     const genesis = await client.request<string>("blockchain.block.header", [0]);
 //     const tip = await client.request<{ height: number }>("blockchain.headers.subscribe");

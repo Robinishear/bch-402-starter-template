@@ -22,6 +22,7 @@ export interface BuiltPayment {
   changeSats: bigint;
 }
 
+
 export class InsufficientFundsError extends Error {
   constructor(
     public readonly availableSats: bigint,

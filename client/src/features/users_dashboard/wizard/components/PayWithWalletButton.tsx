@@ -47,6 +47,7 @@ export default function PayWithWalletButton({ payAddress, amountSats, amountBch,
       setStep("idle");
     }
   };
+  
 
   return (
     <div className="space-y-2">

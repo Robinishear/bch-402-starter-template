@@ -1,6 +1,7 @@
 import { BackgroundFX } from "@/app/(public)/components/BackgroundFX";
 import SidebarContent from "./components/SidebarContent";
 import MobileNav from "./components/MobileNav";
+import { WalletProvider } from "@/features/users_dashboard/wizard/components/WalletProvider";
 
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
@@ -16,8 +17,11 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         <MobileNav>
           <SidebarContent />
         </MobileNav>
+        
+        <WalletProvider>
+          <main className="mx-auto w-full max-w-6xl flex-1">{children}</main>
+        </WalletProvider>
 
-        <main className="mx-auto w-full max-w-6xl flex-1">{children}</main>
       </div>
     </div>
   );

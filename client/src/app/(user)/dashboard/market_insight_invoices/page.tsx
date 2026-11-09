@@ -1,7 +1,7 @@
 import PlaygroundForm from "@/features/users_dashboard/invoices/components/PlaygroundForm";
 import { getPricing } from "@/features/users_dashboard/pricing/_core/pricing.service";
 import ConnectWalletButton from "@/features/users_dashboard/wizard/components/ConnectWalletButton";
-import { WalletProvider } from "@/features/users_dashboard/wizard/components/WalletProvider";
+// import { WalletProvider } from "@/features/users_dashboard/wizard/components/WalletProvider";
 
 function LoadError() {
   return (
@@ -18,7 +18,7 @@ export default async function MarketInsightPage() {
   if (!pricing) return <LoadError />;
 
   return (
-    <WalletProvider>
+    //  <WalletProvider>
       <div className="space-y-8 p-6">
         <header className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-6">
           <div>
@@ -36,7 +36,7 @@ export default async function MarketInsightPage() {
 
         <PlaygroundForm pricing={pricing} />
       </div>
-    </WalletProvider>
+      // </WalletProvider
   );
 }
 

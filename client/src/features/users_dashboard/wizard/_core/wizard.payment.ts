@@ -69,6 +69,7 @@ export const buildPayment = ({
   const feeWithChange = estimateFee(picked.length, 2);
   const feeNoChange = estimateFee(picked.length, 1);
 
+  
   if (pickedTotal < amountSats + feeNoChange) {
     throw new InsufficientFundsError(total, amountSats + estimateFee(Math.max(sorted.length, 1), 1));
   }

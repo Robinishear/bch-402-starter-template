@@ -13,6 +13,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   return <WalletContext.Provider value={wallet}>{children}</WalletContext.Provider>;
 }
 
+
 export function useWallet() {
   const context = useContext(WalletContext);
   if (!context) {

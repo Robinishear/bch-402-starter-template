@@ -11,6 +11,7 @@ export interface ScanResult {
   scanned: number;
 }
 
+
 type GetPubkey = (childIndex: number, index: bigint) => Uint8Array | undefined;
 
 export const scanWallet = async (

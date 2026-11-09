@@ -13,6 +13,7 @@ export class ElectrumClient {
       this.rejectAll(new Error("Connection to the blockchain server closed")),
     );
   }
+  
 
   static connect(url = ELECTRUM_WS_URL, timeoutMs = 8000): Promise<ElectrumClient> {
     return new Promise((resolve, reject) => {

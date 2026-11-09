@@ -22,22 +22,16 @@ const cta = 'inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm trans
 
 export function Hero() {
   return (
-    <section className="relative isolate mx-auto max-w-7xl px-3 pb-20 pt-16 sm:px-6 lg:pb-28 lg:pt-24">
-      {/* Background glow + grid */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-1/2 top-0 h-120 w-225 -translate-x-1/2 rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-size-[56px_56px] mask-[radial-gradient(ellipse_at_center,black_30%,transparent_72%)]" />
-      </div>
-
+    <section className="mx-auto max-w-7xl px-3 pb-20 pt-16 sm:px-6 lg:pb-28 lg:pt-24">
       <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         {/* Left */}
         <div className="text-center lg:text-left">
           <Badge
             variant="outline"
-            className="hero-in gap-2.5 rounded-full border-white/10 bg-white/4 py-1 pl-1 pr-4 text-xs font-medium text-gray-300 backdrop-blur"
+            className="hero-in gap-2.5 rounded-full border-white/15 bg-transparent py-1 pl-1 pr-4 text-xs font-medium text-gray-300"
             style={delay(0)}
           >
-            <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-300">
+            <span className="rounded-full border border-emerald-500/40 px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-emerald-300">
               BCH
             </span>
             Pay-per-use AI, powered by Bitcoin Cash
@@ -79,7 +73,7 @@ export function Hero() {
               href="#how-it-works"
               className={cn(
                 cta,
-                'border border-white/12 bg-white/4 font-medium text-gray-200 backdrop-blur hover:border-emerald-500/40 hover:bg-emerald-500/10 hover:text-white',
+                'border border-white/20 font-medium text-gray-200 hover:border-emerald-500/50 hover:text-white',
               )}
             >
               See how it works
@@ -92,8 +86,8 @@ export function Hero() {
           >
             {TRUST.map((item) => (
               <li key={item} className="flex items-center gap-2 text-[13px] text-gray-400">
-                <span className="flex size-4 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
-                  <Check className="size-3.5" strokeWidth={3} />
+                <span className="flex size-4 items-center justify-center rounded-full border border-emerald-500/40 text-emerald-300">
+                  <Check className="size-2.5" strokeWidth={3.5} />
                 </span>
                 {item}
               </li>
@@ -101,33 +95,28 @@ export function Hero() {
           </ul>
         </div>
 
-        {/* Right: sample output card */}
-        <div className="hero-in relative mx-auto w-full max-w-md lg:max-w-none" style={delay(250)}>
-          <div aria-hidden className="absolute -inset-8 rounded-[2.5rem] bg-emerald-500/15 blur-3xl" />
+        <div className="hero-in mx-auto w-full max-w-md lg:max-w-none" style={delay(250)}>
+          <div className="hero-card hero-float relative rounded-3xl shadow-2xl shadow-emerald-500/10">
+            <div aria-hidden className="absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-emerald-300/60 to-transparent" />
 
-          <div className="hero-float relative overflow-hidden rounded-3xl border border-white/10 bg-[#06120e]/60 shadow-2xl shadow-emerald-500/10 backdrop-blur-xl">
-            <div aria-hidden className="absolute inset-x-8 top-0 h-px bg-linear-to-r from-transparent via-emerald-300/50 to-transparent" />
-
-            {/* Window bar */}
-            <div className="flex items-center justify-between border-b border-white/8 px-5 py-3.5">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-3.5">
               <div className="flex gap-1.5">
                 {[0, 1, 2].map((i) => (
-                  <span key={i} className="size-2.5 rounded-full bg-white/15" />
+                  <span key={i} className="size-2.5 rounded-full border border-white/25" />
                 ))}
               </div>
-              <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-widest text-gray-400">
+              <span className="rounded-full border border-white/15 px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-widest text-gray-400">
                 Sample output
               </span>
             </div>
 
-            <div className="space-y-4 p-5 sm:p-6">
+            <div className="space-y-5 p-5 sm:p-6">
               {/* Prompt */}
-              <div className="ml-auto w-fit max-w-[88%] rounded-2xl rounded-tr-md border border-emerald-500/20 bg-emerald-500/12 px-4 py-2.5 text-sm leading-relaxed text-emerald-50">
+              <div className="ml-auto w-fit max-w-[88%] rounded-2xl rounded-tr-md border border-emerald-500/30 px-4 py-2.5 text-sm leading-relaxed text-emerald-50">
                 {SAMPLE.prompt}
               </div>
 
-              {/* AI answer */}
-              <div className="rounded-2xl rounded-tl-md border border-white/10 bg-white/4 p-4 sm:p-5">
+              <div className="rounded-2xl rounded-tl-md border border-white/10 p-4 sm:p-5">
                 <div className="mb-4 flex items-center gap-2">
                   <span className="size-1.5 rounded-full bg-emerald-400" />
                   <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-emerald-400/90">
@@ -135,10 +124,13 @@ export function Hero() {
                   </p>
                 </div>
 
-                <ul className="space-y-3.5">
+                <ul className="space-y-4">
                   {SAMPLE.points.map(({ k, v, dot }) => (
-                    <li key={k} className="flex gap-3">
-                      <span className={cn('mt-1.75 size-1.5 shrink-0 rounded-full', dot)} />
+                    <li
+                      key={k}
+                      className="relative pl-6 before:absolute before:-bottom-6 before:left-[2.5px] before:top-4 before:w-px before:bg-white/10 last:before:hidden"
+                    >
+                      <span className={cn('absolute left-0 top-2 size-1.5 rounded-full', dot)} />
                       <p className="text-sm leading-relaxed text-gray-400">
                         <span className="font-medium text-white">{k}</span>
                         <span className="mx-1.5 text-white/20">/</span>
@@ -149,8 +141,7 @@ export function Hero() {
                 </ul>
               </div>
 
-              {/* Payment row */}
-              <div className="flex items-center justify-between rounded-2xl border border-emerald-500/25 bg-emerald-500/8 px-4 py-3.5">
+              <div className="flex items-center justify-between rounded-2xl border border-emerald-500/30 px-4 py-3.5">
                 <div className="flex items-center gap-3">
                   <span className="flex size-7 items-center justify-center rounded-full bg-emerald-500 text-black shadow-[0_0_20px_rgba(16,185,129,0.5)]">
                     <Check className="size-3.5" strokeWidth={3} />
@@ -160,7 +151,7 @@ export function Hero() {
                     <p className="mt-0.5 text-[11px] text-emerald-200/50">Paid from your wallet</p>
                   </div>
                 </div>
-                <span className="rounded-lg border border-emerald-500/20 bg-black/20 px-2.5 py-1 font-mono text-xs text-emerald-100">
+                <span className="rounded-lg border border-emerald-500/25 px-2.5 py-1 font-mono text-xs text-emerald-100">
                   {SAMPLE.cost}
                 </span>
               </div>

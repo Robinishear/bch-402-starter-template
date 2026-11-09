@@ -48,6 +48,7 @@ export const payWithWallet = async ({
       throw new Error("Your wallet did not share its change key. Please reconnect your wallet.");
     }
 
+    
     const built = buildPayment({
       coins,
       payAddress,

@@ -18,6 +18,7 @@ export default function ConnectWalletButton() {
       setSlow(false);
       return;
     }
+    
     const timer = setTimeout(() => setSlow(true), SLOW_AFTER_MS);
     return () => clearTimeout(timer);
   }, [isReconnecting]);
