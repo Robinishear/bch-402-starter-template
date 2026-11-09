@@ -31,7 +31,7 @@ export default async function HistoryPage({ searchParams }: Props) {
     <div className="space-y-8 p-6">
       <header className="border-b border-white/10 pb-6">
         <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-          Usage{" "}
+         AI Usage{" "}
           <span className="bg-linear-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">History</span>
         </h1>
         <p className="mt-1.5 max-w-2xl text-sm text-gray-400">Every AI request you made and what it cost.</p>

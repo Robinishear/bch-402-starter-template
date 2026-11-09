@@ -64,7 +64,7 @@ export interface AdminPageProps {
     status?: string;
     role?: string;
     searchTerm?: string;
-        days?: string; 
+    days?: string; 
   }>;
 }
 

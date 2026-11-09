@@ -89,7 +89,10 @@ const getAllUsers = async (query: IQueryParams) => {
       throw new AppError(status.BAD_REQUEST, "Invalid role filter.");
     }
     where.role = query.role;
+  } else {
+    where.role = { not: Role.ADMIN };
   }
+  //* not admin only user get 
 
   if (query.searchTerm) {
     where.OR = [

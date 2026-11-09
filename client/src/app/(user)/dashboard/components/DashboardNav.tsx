@@ -10,8 +10,8 @@ type NavItem = { href: string; label: string; icon: LucideIcon; exact?: boolean 
 
 const NAV: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, exact: true },
-  { href: "/dashboard/market_insight_invoices", label: "Market insight", icon: Sparkles },
-  { href: "/dashboard/history", label: "History", icon: History },
+  { href: "/dashboard/market_insight_invoices", label: "AI Playground", icon: Sparkles },
+  { href: "/dashboard/history", label: "AI History", icon: History },
 ];
 
 export default function DashboardNav() {
