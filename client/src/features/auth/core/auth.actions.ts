@@ -1,11 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { loginUserAction, logoutUserAction, registerUserAction } from "./auth.server";
+import { forgotPasswordAction, loginUserAction, logoutUserAction, registerUserAction, resetPasswordAction } from "./auth.service";
 import { getDefaultDashboardRoute } from "@/_core/utils/authUtils";
 import { deleteCookie, forwardSetCookies } from "@/_core/utils/cookie";
-import { loginValidationSchema, registerValidationSchema } from "./auth.validation";
-import { RegisterPayload } from "./auth.interface";
+import { forgotPasswordValidationSchema, loginValidationSchema, registerValidationSchema, resetPasswordValidationSchema } from "./auth.validation";
+import { ActionResult, RegisterPayload } from "./auth.interface";
 import { revalidatePath } from "next/dist/server/web/spec-extension/revalidate";
 import { AUTH_COOKIES, LOGOUT_TIMEOUT_MS } from "./auth.constants";
 
@@ -113,4 +113,47 @@ export async function handleLogout() {
 
   revalidatePath('/', 'layout');
   redirect('/login');
+}
+
+
+
+//* forgot password action
+export async function handleForgotPassword(email: string): Promise<ActionResult> {
+  const parsed = forgotPasswordValidationSchema.safeParse({ email });
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.issues[0]?.message ?? "Invalid email" };
+  }
+
+  try {
+    await forgotPasswordAction(parsed.data);
+    return { success: true, message: "If an account exists for this email, an OTP has been sent." };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message || "Could not send OTP",
+    };
+  }
+}
+
+//* reset password action
+export async function handleResetPassword(payload: {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
+}): Promise<ActionResult> {
+  const parsed = resetPasswordValidationSchema.safeParse(payload);
+  if (!parsed.success) {
+    return { success: false, message: parsed.error.issues[0]?.message ?? "Invalid input data" };
+  }
+
+  try {
+    await resetPasswordAction(parsed.data);
+    return { success: true, message: "Password reset successfully. Please login with your new password." };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message || "Could not reset password",
+    };
+  }
 }

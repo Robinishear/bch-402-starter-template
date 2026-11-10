@@ -24,3 +24,14 @@ export interface LoginPayload {
   email: string;
   password: string;
 }
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+export type ActionResult = { success: boolean; message: string };
+export interface ResetPasswordPayload {
+  email: string;
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
+}
