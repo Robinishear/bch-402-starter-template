@@ -2,6 +2,9 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { envVars } from "../config/env";
 import { prisma } from "./prisma";
+import { sendResetOtpEmail } from "./mailer";
+import { emailOTP } from "better-auth/plugins";
+
 
 const isProd = envVars.NODE_ENV === "production";
 
@@ -19,7 +22,15 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   trustedOrigins: [envVars.FRONTEND_ORIGIN],
 
-  emailAndPassword: { enabled: true },
+  //* old code
+  // emailAndPassword: { enabled: true },
+
+  //* new code
+  emailAndPassword: {
+  enabled: true,
+  revokeSessionsOnPasswordReset: true,
+},
+
 
   socialProviders: {
     google: {
@@ -61,8 +72,23 @@ export const auth = betterAuth({
   //   },
   // },
 
+  //* new plugins add for email OTP for password reset
+  plugins: [
+  emailOTP({
+    otpLength: 6,
+    expiresIn: 60 * 10, 
+    allowedAttempts: 5,
+    async sendVerificationOTP({ email, otp, type }) {
+      if (type !== "forget-password") return;
+      void sendResetOtpEmail(email, otp).catch((err) =>
+        console.error("Failed to send reset OTP email:", err),
+      );
+    },
+  }),
+],
+
   session: {
-    expiresIn: 60 * 60 * 24, // 1 day
+    expiresIn: 60 * 60 * 24, 
     updateAge: 60 * 60 * 24,
     cookieCache: { enabled: true, maxAge: 60 * 60 * 24 },
   },

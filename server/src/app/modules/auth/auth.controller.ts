@@ -68,4 +68,26 @@ const socialSuccess = catchAsync(async (req, res) => {
   res.redirect(`${envVars.FRONTEND_ORIGIN}/dashboard`);
 });
 
-export const AuthController = { register, login, getMe, logout, socialSuccess };
+//* New controller methods for forgot password and reset password */
+const forgotPassword = catchAsync(async (req, res) => {
+  await AuthService.forgotPassword(req.body.email);
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "If an account exists for this email, an OTP has been sent.",
+    data: null,
+  });
+});
+
+const resetPassword = catchAsync(async (req, res) => {
+  await AuthService.resetPassword(req.body);
+  sendResponse(res, {
+    httpStatusCode: status.OK,
+    success: true,
+    message: "Password reset successfully. Please login with your new password.",
+    data: null,
+  });
+});
+
+
+export const AuthController = { register, login, getMe, logout, socialSuccess, forgotPassword, resetPassword };

@@ -110,10 +110,54 @@ const handleSocialSuccess = async (headers: IncomingHttpHeaders) => {
   return { user, token: session.session.token };
 };
 
+
+//* new add forget password and reset password functions
+const forgotPassword = async (rawEmail: string) => {
+  const email = rawEmail.toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user || user.isDeleted || user.status !== UserStatus.ACTIVE) return;
+
+  try {
+    await auth.api.sendVerificationOTP({
+      body: { email, type: "forget-password" },
+    });
+  } catch (error) {
+    return handleAuthError(error);
+  }
+};
+
+// reset password function
+const resetPassword = async (payload: {
+  email: string;
+  otp: string;
+  newPassword: string;
+}) => {
+  const email = payload.email.toLowerCase();
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user || user.isDeleted || user.status !== UserStatus.ACTIVE) {
+    throw new AppError(status.BAD_REQUEST, "Invalid or expired OTP.");
+  }
+
+  try {
+    await auth.api.resetPasswordEmailOTP({
+      body: { email, otp: payload.otp, password: payload.newPassword },
+    });
+  } catch (error) {
+    return handleAuthError(error);
+  }
+
+  await prisma.session.deleteMany({ where: { userId: user.id } });
+};
+
+
 export const AuthService = {
   registerUser,
   loginUser,
   getMe,
   logoutUser,
   handleSocialSuccess,
+  forgotPassword,
+  resetPassword,
 };

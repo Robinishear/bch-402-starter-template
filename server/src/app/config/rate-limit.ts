@@ -60,3 +60,21 @@ export const publicPollLimiter = rateLimit({
   legacyHeaders: false,
   message: tooMany,
 });
+
+
+export const forgotPasswordCooldown = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 1,
+  keyGenerator: (req) => String(req.body?.email ?? "").toLowerCase(),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Please wait 60 seconds before requesting another OTP." },
+});
+
+export const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: "Too many requests. Please try again later." },
+});

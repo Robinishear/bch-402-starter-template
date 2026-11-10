@@ -1,9 +1,21 @@
 import { Router } from "express";
 import { validateRequest } from "../../middleware/validateRequest";
 import { AuthController } from "./auth.controller";
-import { loginSchema, registerSchema } from "./auth.validation";
 import { checkAuth } from "../../middleware/checkAuth";
-import { loginLimiter, registerLimiter } from "../../config/rate-limit";
+
+import {
+  forgotPasswordCooldown,
+  forgotPasswordLimiter,
+  loginLimiter,
+  registerLimiter,
+} from "../../config/rate-limit";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from "./auth.validation";
+
 
 const router = Router();
 router.post(
@@ -17,4 +29,18 @@ router.get("/me", checkAuth(), AuthController.getMe);
 router.post("/logout", AuthController.logout);
 router.get("/social/success", AuthController.socialSuccess);
 
+
+router.post(
+  "/forgot-password",
+  forgotPasswordLimiter,
+  forgotPasswordCooldown,
+  validateRequest(forgotPasswordSchema),
+  AuthController.forgotPassword,
+);
+router.post(
+  "/reset-password",
+  forgotPasswordLimiter,
+  validateRequest(resetPasswordSchema),
+  AuthController.resetPassword,
+);
 export const AuthRoutes = router;

@@ -45,12 +45,12 @@ interface EnvConfig {
     GEMINI_MODEL: string;
   };
 
-  EMAIL: {
+  SMTP: {
   SMTP_HOST: string;
   SMTP_PORT: string;
   SMTP_USER: string;
   SMTP_PASS: string;
-  EMAIL_FROM: string;
+  SMTP_FROM: string;
 };
 }
 
@@ -88,10 +88,10 @@ const loadEnvVariables = (): EnvConfig => {
     "GEMINI_MODEL",
 
     "SMTP_HOST",
-"SMTP_PORT",
-"SMTP_USER",
-"SMTP_PASS",
-"EMAIL_FROM",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "SMTP_FROM",
   ];
 
   requiredEnvVariables.forEach((variable) => {
@@ -180,12 +180,12 @@ const loadEnvVariables = (): EnvConfig => {
       GEMINI_MODEL: process.env.GEMINI_MODEL ?? "",
     },
 
-    EMAIL: {
-  SMTP_HOST: process.env.SMTP_HOST as string,
-  SMTP_PORT: process.env.SMTP_PORT as string,
-  SMTP_USER: process.env.SMTP_USER as string,
-  SMTP_PASS: process.env.SMTP_PASS as string,
-  EMAIL_FROM: process.env.EMAIL_FROM as string,
+    SMTP: {
+     SMTP_HOST: process.env.SMTP_HOST as string,
+     SMTP_PORT: process.env.SMTP_PORT as string,
+     SMTP_USER: process.env.SMTP_USER as string,
+     SMTP_PASS: process.env.SMTP_PASS as string,
+     SMTP_FROM: process.env.SMTP_FROM as string,
 },
   };
 };
