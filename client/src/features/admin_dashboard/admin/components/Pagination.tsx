@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePaginationNav } from "./pagination-provider";
+import { usePaginationNav } from "@/components/ui/shared/pagination-provider";
 
 interface Meta {
   page: number;

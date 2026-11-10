@@ -1,5 +1,5 @@
 import { httpClient } from "@/_core/axios/httpClient";
-import { UsageHistory, UsageHistoryItem, UsageSummary } from "./usage.interface.ts.js";
+import { UsageHistory, UsageHistoryItem, UsageSummary } from "./usage.interface.js";
 
 
 //* usage summary */

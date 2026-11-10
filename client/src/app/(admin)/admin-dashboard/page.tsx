@@ -3,8 +3,8 @@ import { AdminService } from "@/features/admin_dashboard/admin/_core/admin.servi
 import { AdminStatsCards } from "@/features/admin_dashboard/admin/components/AdminStatsCards";
 import { AnalyticsChart } from "@/features/admin_dashboard/admin/components/AnalyticsChart";
 import Pagination from "@/features/admin_dashboard/admin/components/Pagination";
-import { PaginationProvider, TableLoading } from "@/features/admin_dashboard/admin/components/pagination-provider";
 import { UserManagementTable } from "@/features/admin_dashboard/admin/components/UserManagementTable";
+import { PaginationProvider, TableLoading } from "@/components/ui/shared/pagination-provider";
 
 const RANGE_OPTIONS = [7, 30, 90];
 
