@@ -2,8 +2,6 @@ import { BackgroundFX } from "@/app/(public)/components/BackgroundFX";
 import AdminSidebarContent from "./components/AdminSidebarContent";
 import AdminMobileNav from "./components/AdminMobileNav";
 
-
-
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen overflow-x-clip bg-[#05080a] text-gray-100 selection:bg-emerald-400/30">

@@ -123,6 +123,8 @@ const getAllUsers = async (query: IQueryParams) => {
 const getUserSummary = async () => {
   const grouped = await prisma.user.groupBy({
     by: ["status"],
+      where: { role: { not: Role.ADMIN } },
+//* not admin only user get
     _count: { _all: true },
   });
   const countOf = (s: UserStatus) =>
