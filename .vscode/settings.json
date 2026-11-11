@@ -21,6 +21,7 @@
     "listunspent",
     "locktime",
     "Multichain",
+    "qrcode",
     "Satoshis",
     "scripthash",
     "swal",
