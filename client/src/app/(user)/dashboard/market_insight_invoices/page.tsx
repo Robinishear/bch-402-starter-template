@@ -13,6 +13,8 @@ function LoadError() {
   );
 }
 
+export const metadata = { title: "Market Insight Invoices" };
+
 export default async function MarketInsightPage() {
   const pricing = await getPricing().catch(() => null);
   if (!pricing) return <LoadError />;

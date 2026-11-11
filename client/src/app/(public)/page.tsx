@@ -8,6 +8,7 @@ import { HowItWorks } from "./components/HowItWorks";
 import { InitialLoader } from "./components/InitialLoader";
 import { WalletFlow } from "./components/WalletFlow";
 
+
 export default function HomePage() {
   const [contentReady, setContentReady] = useState(false);
 

@@ -9,6 +9,7 @@ import StatCards from "@/features/users_dashboard/usage/components/StatCards";
 // history: import UsagePagination from "@/features/users_dashboard/usage/components/UsagePagination";
 
 // history: type Props = { searchParams: Promise<{ page?: string }> };
+export const metadata = { title: "User Dashboard" };
 
 function LoadError() {
   return (

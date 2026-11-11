@@ -21,6 +21,8 @@ function LoadError() {
   );
 }
 
+export const metadata = { title: "Usage History" };
+
 export default async function HistoryPage({ searchParams }: Props) {
   const { page } = await searchParams;
   const currentPage = Math.max(Number(page) || 1, 1);
