@@ -6,7 +6,6 @@ import { prisma } from "./app/lib/prisma";
 import { startInvoiceSweeper, stopInvoiceSweeper } from "./workers/invoiceSweeper";
 import { startPaymentWatcher, stopPaymentWatcher } from "./workers/paymentWatcher";
 
-
 let server: Server | null = null;
 let shuttingDown = false;
 

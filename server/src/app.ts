@@ -13,7 +13,6 @@ import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { prisma } from "./app/lib/prisma";
 import { limiter } from "./app/config/rate-limit";
 
-
 const app: Application = express();
 
 app.set("query parser", (str: string) => qs.parse(str));

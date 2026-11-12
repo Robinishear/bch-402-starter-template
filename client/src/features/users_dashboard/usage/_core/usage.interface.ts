@@ -19,7 +19,6 @@ export interface UsageHistoryItem {
   amountSats: string;
   priceUsdCents: number;
 }
-
 export interface PaginationMeta {
   page: number;
   limit: number;

@@ -4,7 +4,6 @@ import { CreateInvoicePayload, CreateInvoiceState, GetInvoiceState, RunInvoiceSt
 import { createInvoice, getInvoice, runInvoice } from "./invoices.service";
 import { createInvoiceValidationSchema } from "./invoices.validation";
 
-
 export async function handleCreateInvoice(
   payload: CreateInvoicePayload,
 ): Promise<CreateInvoiceState> {

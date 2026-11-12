@@ -8,7 +8,6 @@ export interface PricingData {
   bchUsdRate: string;
   features: FeaturePricing[];
 }
-
 export interface PricingApiResponse {
   success: boolean;
   message: string;

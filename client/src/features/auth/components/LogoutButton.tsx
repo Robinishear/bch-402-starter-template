@@ -3,7 +3,7 @@
 import { useFormStatus } from 'react-dom';
 import { cn } from '@/_core/utils/utils';
 import { handleLogout } from '../core/auth.actions';
-import { authBtn } from './auth-button-styles';
+import { authBtn } from './constants';
 import { useWalletOptional } from '@/features/users_dashboard/wizard/components/WalletProvider';
 
 function SubmitButton() {

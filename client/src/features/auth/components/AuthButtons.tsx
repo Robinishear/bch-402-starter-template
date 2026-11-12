@@ -3,7 +3,7 @@ import { LayoutDashboard } from 'lucide-react';
 
 import { getCookie } from '@/_core/utils/cookie';
 import LogoutButton from './LogoutButton';
-import { authBtn } from './auth-button-styles';
+import { authBtn } from './constants';
 
 export default async function AuthButtons() {
   const isLoggedIn = Boolean(await getCookie('accessToken'));

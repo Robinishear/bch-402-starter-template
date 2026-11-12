@@ -1,7 +1,7 @@
 import { Activity, Coins, Cpu, Receipt, Wallet, type LucideIcon } from "lucide-react";
 
 import { cn } from "@/_core/utils/utils";
-import { UsageSummary } from "../_core/usage.interface.js";
+import { UsageSummary } from "../_core/usage.interface";
 
 type Stat = {
   label: string;

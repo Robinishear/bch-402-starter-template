@@ -1,7 +1,6 @@
 import { FeaturePricing } from "../../pricing/_core/pricing.interface";
 import PriceTag from "./PriceTag";
 
-
 interface Props {
   features: FeaturePricing[];
   value: string;

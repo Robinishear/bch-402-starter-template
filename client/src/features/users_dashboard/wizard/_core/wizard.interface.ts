@@ -34,7 +34,7 @@ export class InsufficientFundsError extends Error {
 }
 
 
-//% TODO wallet electrum 
+// TODO wallet electrum 
 export interface RawUtxo {
   tx_hash: string;
   tx_pos: number;

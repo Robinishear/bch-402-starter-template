@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { PaginationProvider, TableLoading } from "@/components/ui/shared/pagination-provider";
+import { PaginationProvider, TableLoading } from "@/components/shared/pagination-provider";
 import { getUsageHistory } from "@/features/users_dashboard/usage/_core/usage.service";
 import UsageHistoryList from "@/features/users_dashboard/usage/components/UsageHistoryList";
 import UsagePagination from "@/features/users_dashboard/usage/components/UsagePagination";

@@ -6,17 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import SocialButtons from "./SocialButtons";
-
-
-type AuthCardProps = {
-  eyebrow: string;
-  title: string;
-  subtitle: string;
-  footerText: string;
-  footerLabel: string;
-  footerHref: string;
-  children: ReactNode;
-};
+import { AuthCardProps } from "./constants";
 
 export function AuthCard({ eyebrow, title, subtitle, footerText, footerLabel, footerHref, children }: AuthCardProps) {
   return (

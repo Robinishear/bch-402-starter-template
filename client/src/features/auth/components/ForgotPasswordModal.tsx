@@ -8,10 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { handleForgotPassword, handleResetPassword } from "../core/auth.actions";
+import { RESEND_SECONDS, Step } from "./constants";
 
-const RESEND_SECONDS = 60;
-
-type Step = "email" | "reset";
 
 export function ForgotPasswordModal() {
   const [open, setOpen] = useState(false);
@@ -45,7 +43,7 @@ export function ForgotPasswordModal() {
   };
 
   const onOpenChange = (next: boolean) => {
-    if (pending) return; // loading এর সময় বন্ধ হবে না
+    if (pending) return; 
     setOpen(next);
     if (!next) resetAll();
   };

@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PaginationMeta } from "../_core/usage.interface";
-import { usePaginationNav } from "@/components/ui/shared/pagination-provider";
+import { usePaginationNav } from "@/components/shared/pagination-provider";
 
 const btn =
   "h-9 gap-1.5 rounded-lg border-white/10 bg-white/5 px-3 text-sm text-gray-200 shadow-none transition-colors " +

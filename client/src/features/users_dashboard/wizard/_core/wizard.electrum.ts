@@ -2,7 +2,6 @@ import { binToHex } from "@bitauth/libauth";
 import { Pending, RawUtxo, Utxo } from "./wizard.interface";
 import { ELECTRUM_WS_URL } from "./wizard.constants";
 
-
 export class ElectrumClient {
   private nextId = 1;
   private pending = new Map<number, Pending>();
