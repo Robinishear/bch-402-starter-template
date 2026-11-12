@@ -2,9 +2,10 @@ import { AdminPageProps } from "@/features/admin_dashboard/admin/_core/admin.int
 import { AdminService } from "@/features/admin_dashboard/admin/_core/admin.service";
 import { AdminStatsCards } from "@/features/admin_dashboard/admin/components/AdminStatsCards";
 import { AnalyticsChart } from "@/features/admin_dashboard/admin/components/AnalyticsChart";
-import Pagination from "@/features/admin_dashboard/admin/components/Pagination";
+import Pagination from "@/features/admin_dashboard/components/Pagination";
+import SearchFilter from "@/features/admin_dashboard/components/SearchFilter";
 import { UserManagementTable } from "@/features/admin_dashboard/admin/components/UserManagementTable";
-import { PaginationProvider, TableLoading } from "@/components/ui/shared/pagination-provider";
+import { PaginationProvider, TableLoading } from "@/components/shared/pagination-provider";
 
 const RANGE_OPTIONS = [7, 30, 90];
 
@@ -23,6 +24,7 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
 
   const daysParam = Number(Array.isArray(params.days) ? params.days[0] : params.days);
   const days = RANGE_OPTIONS.includes(daysParam) ? daysParam : 30;
+  const searchTerm = Array.isArray(params.searchTerm) ? params.searchTerm[0] : params.searchTerm;
 
   const data = await Promise.all([AdminService.getAnalytics(days), AdminService.getAllUsers(params)]).catch(() => null);
   if (!data) return <LoadError />;
@@ -43,6 +45,13 @@ export default async function AdminDashboardPage({ searchParams }: AdminPageProp
       <AnalyticsChart analytics={analytics} />
 
       <section className="space-y-4">
+        <SearchFilter
+          action="/admin-dashboard"
+          placeholder="Search by name or email"
+          searchTerm={searchTerm}
+          keep={{ days: String(days) }}
+        />
+
         <PaginationProvider>
           <TableLoading>
             <UserManagementTable users={usersResponse.data} />

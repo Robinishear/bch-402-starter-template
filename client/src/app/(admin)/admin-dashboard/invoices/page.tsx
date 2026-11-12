@@ -1,8 +1,14 @@
 import { InvoicePageProps } from "@/features/admin_dashboard/invoices/_core/invoice.interface";
 import { InvoiceService } from "@/features/admin_dashboard/invoices/_core/invoice.service";
 import InvoiceTable from "@/features/admin_dashboard/invoices/components/InvoiceTable";
-import Pagination from "@/features/admin_dashboard/admin/components/Pagination";
-import { PaginationProvider } from "@/components/ui/shared/pagination-provider";
+import Pagination from "@/features/admin_dashboard/components/Pagination";
+import SearchFilter from "@/features/admin_dashboard/components/SearchFilter";
+import { PaginationProvider } from "@/components/shared/pagination-provider";
+
+const STATUS_OPTIONS = ["PENDING", "PAID", "COMPLETED", "EXPIRED", "UNDERPAID"].map((value) => ({
+  value,
+  label: value.charAt(0) + value.slice(1).toLowerCase(),
+}));
 
 function LoadError() {
   return (
@@ -26,11 +32,19 @@ export default async function AdminInvoicesPage({ searchParams }: InvoicePagePro
         <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">Invoices</h1>
         <p className="mt-1.5 text-sm text-gray-400">Every payment request and its status.</p>
       </header>
-<PaginationProvider>
 
-      <InvoiceTable invoices={response.data} />
-      {response.meta && <Pagination meta={response.meta} searchParams={params} label="invoices" />}
-    </PaginationProvider>
+      <SearchFilter
+        action="/admin-dashboard/invoices"
+        placeholder="Search by email, invoice id, txid or address"
+        searchTerm={params.searchTerm}
+        status={params.status}
+        statusOptions={STATUS_OPTIONS}
+      />
+
+      <PaginationProvider>
+        <InvoiceTable invoices={response.data} />
+        {response.meta && <Pagination meta={response.meta} searchParams={params} label="invoices" />}
+      </PaginationProvider>
     </div>
   );
 }

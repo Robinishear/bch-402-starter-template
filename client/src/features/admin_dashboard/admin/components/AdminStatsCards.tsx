@@ -7,38 +7,8 @@ import { cn } from "@/_core/utils/utils";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { IStats } from "../_core/admin.interface";
+import { Row,TONE,StatCard,formatNumber } from "./constants";
 
-type Tone = "green" | "red" | "amber" | "blue" | "gray";
-
-type Row = {
-  label: string;
-  value: string;
-  tone: Tone;
-  raw?: number;
-  total?: boolean;
-};
-
-type StatCard = {
-  key: string;
-  label: string;
-  caption: string;
-  value: string;
-  icon: LucideIcon;
-  preview: Row[];
-  all: Row[];
-  distribution?: boolean;
-  featured?: boolean;
-};
-
-const formatNumber = (value: number | string) => Number(value).toLocaleString("en-US");
-
-const TONE: Record<Tone, { dot: string; text: string; bar: string; soft: string }> = {
-  green: { dot: "bg-emerald-400", text: "text-emerald-300", bar: "bg-emerald-400", soft: "bg-emerald-500/10" },
-  red: { dot: "bg-red-400", text: "text-red-300", bar: "bg-red-400", soft: "bg-red-500/10" },
-  amber: { dot: "bg-amber-400", text: "text-amber-300", bar: "bg-amber-400", soft: "bg-amber-500/10" },
-  blue: { dot: "bg-sky-400", text: "text-sky-300", bar: "bg-sky-400", soft: "bg-sky-500/10" },
-  gray: { dot: "bg-gray-400", text: "text-gray-300", bar: "bg-gray-500", soft: "bg-white/5" },
-};
 
 function PreviewRows({ rows }: { rows: Row[] }) {
   return (

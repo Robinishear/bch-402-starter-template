@@ -1,5 +1,3 @@
-// services/auth.services.ts
-
 import { httpClient } from "@/_core/axios/httpClient";
 import { ForgotPasswordPayload, LoginPayload, RegisterPayload, ResetPasswordPayload, UserResponse } from "./auth.interface";
 

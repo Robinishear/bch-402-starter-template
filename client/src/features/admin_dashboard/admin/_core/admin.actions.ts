@@ -3,12 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { AdminService } from "./admin.service";
 import { updateUserStatusSchema } from "./admin.validation";
+import { AdminActionState } from "./admin.interface";
 
-export interface AdminActionState {
-  success: boolean;
-  message: string;
-  data?: any;
-}
 
 export async function handleUpdateUserStatus(
   userId: string,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {  ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,12 +20,20 @@ import {
 } from "@/components/ui/table";
 
 import { AdminInvoice } from "../_core/invoice.interface";
-import { ACCENT, BORDER, CELL, COLUMNS, COPY_STATE, EXPLORER_TX_URL, MUTED, STATUS_STYLE, SUBTLE } from "./constants";
-
-
-const isRealTxid = (txid: string) => /^[0-9a-f]{64}$/i.test(txid);
-const formatUsd = (cents: number) => `$${(cents / 100).toFixed(2)}`;
-const formatSats = (sats: string) => Number(sats).toLocaleString("en-US");
+import {
+  amountUsd,
+  COLUMNS,
+  COPY_LABEL,
+  copyButton,
+  dot,
+  EXPLORER_TX_URL,
+  hoverTrigger,
+  statusBadge,
+  UI,
+  type CopyState,
+  type HoverTriggerProps,
+} from "./constants";
+  import { isRealTxid, formatUsd, formatSats, Icon } from "./constants";
 
 const shorten = (value: string, head = 8, tail = 6) =>
   value.length <= head + tail + 1
@@ -55,42 +63,37 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
-const Dash = () => <span className={MUTED}>—</span>;
+/*  small pieces  */
+
+const Dash = () => <span className={UI.muted}>—</span>;
 
 function DateCell({ iso }: { iso: string }) {
   const d = new Date(iso);
   return (
     <>
-      <p className="text-gray-200">
+      <p className={UI.dateDay}>
         {d.toLocaleDateString("en-GB", { dateStyle: "medium" })}
       </p>
-      <p className={`text-[11px] ${MUTED}`}>
+      <p className={UI.dateTime}>
         {d.toLocaleTimeString("en-GB", { timeStyle: "short" })}
       </p>
     </>
   );
 }
 
-
-function HoverCopy({
-  short,
-  full,
-  mono = false,
-  className = "",
-  href,
-}: {
+type HoverCopyProps = {
   short: string;
   full: string;
-  mono?: boolean;
-  className?: string;
   href?: string;
-}) {
-  const [status, setStatus] = useState<keyof typeof COPY_STATE>("idle");
+} & Pick<HoverTriggerProps, "mono" | "tone">;
 
-  const textClass = `block truncate ${mono ? "font-mono text-xs" : ""} ${className}`;
+function HoverCopy({ short, full, href, mono = false, tone }: HoverCopyProps) {
+  const [status, setStatus] = useState<CopyState>("idle");
+
+  const triggerClass = hoverTrigger({ mono, tone, link: !!href });
 
   if (short === full && !mono) {
-    return <span className={textClass}>{short}</span>;
+    return <span className={hoverTrigger({ mono, tone })}>{short}</span>;
   }
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -100,7 +103,6 @@ function HoverCopy({
     setTimeout(() => setStatus("idle"), 1500);
   };
 
-  const { Icon, label, style } = COPY_STATE[status];
 
   return (
     <HoverCard>
@@ -109,41 +111,30 @@ function HoverCopy({
         closeDelay={100}
         render={
           href ? (
-            <a
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              className={`${textClass} hover:underline`}
-            />
+            <a href={href} target="_blank" rel="noreferrer" className={triggerClass} />
           ) : (
-            <span className={`${textClass} cursor-default`} />
+            <span className={triggerClass} />
           )
         }
       >
         {short}
       </HoverCardTrigger>
 
-      <HoverCardContent
-        side="top"
-        align="start"
-        className={`flex w-auto max-w-85 items-center gap-2 ${BORDER} bg-black/70 p-2 shadow-2xl shadow-black/60 backdrop-blur-xl`}
-      >
-        <span
-          className={`break-all px-1 text-[11px] leading-relaxed text-gray-100 ${mono ? "font-mono" : ""}`}
-        >
+      <HoverCardContent side="top" align="start" className={UI.hoverContent}>
+        <span className={`${UI.hoverText} ${mono ? UI.hoverTextMono : ""}`}>
           {full}
         </span>
 
-        <div className={`flex shrink-0 items-center gap-1 border-l ${BORDER} pl-2`}>
+        <div className={UI.hoverActions}>
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleCopy}
-            className={`h-7 gap-1 bg-transparent px-2 text-[10px] ${style}`}
+            className={copyButton({ state: status })}
           >
-            <Icon className="size-3.5" />
-            {label}
+            <Icon className={UI.copyIcon} />
+            {COPY_LABEL[status]}
           </Button>
 
           {href && (
@@ -152,9 +143,9 @@ function HoverCopy({
               target="_blank"
               rel="noreferrer"
               title="Open in explorer"
-              className={`flex size-7 items-center justify-center rounded-md border ${BORDER} text-gray-300 transition-colors hover:bg-white/10 hover:text-white`}
+              className={UI.explorerLink}
             >
-              <ExternalLink className="size-3.5" />
+              <ExternalLink className={UI.copyIcon} />
             </a>
           )}
         </div>
@@ -166,36 +157,34 @@ function HoverCopy({
 const ClipCopy = ({
   value,
   max,
-  className = "",
+  tone,
 }: {
   value: string;
   max: number;
-  className?: string;
-}) => <HoverCopy short={clip(value, max)} full={value} className={className} />;
+} & Pick<HoverTriggerProps, "tone">) => (
+  <HoverCopy short={clip(value, max)} full={value} tone={tone} />
+);
 
-export default function InvoiceTable({
-  invoices,
-}: {
-  invoices: AdminInvoice[];
-}) {
+
+export default function InvoiceTable({ invoices }: { invoices: AdminInvoice[] }) {
   if (invoices.length === 0) {
     return (
-      <div className={`rounded-xl border ${BORDER} p-8 text-center text-sm text-gray-400`}>
-        No invoices found.
+      <div className={UI.empty}>
+        <p className={UI.emptyTitle}>No invoices yet</p>
+        <p className={UI.emptyHint}>
+          Invoices appear here as soon as someone requests a paid AI call.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className={`w-full overflow-hidden rounded-xl border ${BORDER} shadow-lg shadow-black/20`}>
-      <Table className="table-fixed text-xs max-lg:min-w-275">
+    <div className={UI.wrapper}>
+      <Table className={UI.table}>
         <TableHeader>
-          <TableRow className={`${BORDER} bg-white/3 hover:bg-white/3`}>
+          <TableRow className={UI.headRow}>
             {COLUMNS.map(([label, width]) => (
-              <TableHead
-                key={label}
-                className={`${width} ${CELL} text-[11px] font-medium uppercase tracking-wider text-gray-400`}
-              >
+              <TableHead key={label} className={`${width} ${UI.headCell}`}>
                 {label}
               </TableHead>
             ))}
@@ -205,81 +194,86 @@ export default function InvoiceTable({
         <TableBody>
           {invoices.map((invoice) => {
             const { user, txid } = invoice;
+            const txReal = !!txid && isRealTxid(txid);
 
             return (
-              <TableRow
-                key={invoice.id}
-                className="border-white/5 transition-colors hover:bg-white/4"
-              >
-                <Table className={CELL}>
+              <TableRow key={invoice.id} className={UI.bodyRow}>
+                <TableCell className={UI.cell}>
                   <DateCell iso={invoice.createdAt} />
-                </Table>
+                </TableCell>
 
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   {user ? (
-                    <>
-                      <ClipCopy value={user.name} max={14} className="font-medium text-white" />
-                      <ClipCopy value={user.email} max={15} className={SUBTLE} />
-                    </>
+                    <div className={UI.userWrap}>
+                      <span className={UI.avatar}>{user.name.charAt(0)}</span>
+                      <div className={UI.userText}>
+                        <ClipCopy value={user.name} max={14} tone="strong" />
+                        <ClipCopy value={user.email} max={15} tone="subtle" />
+                      </div>
+                    </div>
                   ) : (
-                    <>
-                      <p className="font-medium text-gray-300">Anonymous</p>
-                      <p className={`truncate text-[11px] ${MUTED}`}>Public API (no login)</p>
-                    </>
+                    <div className={UI.userWrap}>
+                      <span className={UI.avatarAnon}>?</span>
+                      <div className={UI.userText}>
+                        <p className={UI.anonName}>Anonymous</p>
+                        <p className={UI.anonHint}>Public API, no login</p>
+                      </div>
+                    </div>
                   )}
                 </TableCell>
 
-                <TableCell className={`${CELL}  capitalize text-gray-200`}>
-                  <ClipCopy value={invoice.feature.replace(/-/g, " ")} max={12} />
+                <TableCell className={UI.cell}>
+                  <span className={UI.feature}>
+                    {clip(invoice.feature.replace(/-/g, " "), 14)}
+                  </span>
                 </TableCell>
 
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   <Badge
                     variant="outline"
-                    className={`gap-1 rounded-full px-1 py-0.5 text-[11px] font-medium ${STATUS_STYLE[invoice.status]}`}
+                    className={statusBadge({ status: invoice.status })}
                   >
-                    <span className="size-1.5 rounded-full bg-current" />
-                    {invoice.status}
+                    <span className={dot()} />
+                    {invoice.status.toLowerCase()}
                   </Badge>
                 </TableCell>
 
-                <TableCell className={`${CELL} whitespace-nowrap font-medium text-white`}>
-                  {formatUsd(invoice.priceUsdCents)}
+                <TableCell className={UI.cell}>
+                  <p className={amountUsd()}>{formatUsd(invoice.priceUsdCents)}</p>
+                  <p className={UI.sats}>
+                    {formatSats(invoice.amountSats)}
+                    <span className={UI.satsUnit}>sats</span>
+                  </p>
                 </TableCell>
 
-                <TableCell className={`${CELL} whitespace-nowrap text-gray-300`}>
-                  {formatSats(invoice.amountSats)}
-                  <span className={`ml-1 text-[11px] ${MUTED}`}>sats</span>
-                </TableCell>
-
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   <HoverCopy
                     short={shorten(invoice.payAddress, 8, 5)}
                     full={invoice.payAddress}
                     mono
-                    className={ACCENT}
+                    tone="accent"
                   />
                 </TableCell>
 
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   {txid ? (
                     <HoverCopy
                       short={shorten(txid, 6, 5)}
                       full={txid}
-                      href={isRealTxid(txid) ? `${EXPLORER_TX_URL}${txid}` : undefined}
+                      href={txReal ? `${EXPLORER_TX_URL}${txid}` : undefined}
                       mono
-                      className={isRealTxid(txid) ? ACCENT : "text-gray-400"}
+                      tone={txReal ? "accent" : "muted"}
                     />
                   ) : (
                     <Dash />
                   )}
                 </TableCell>
 
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   {invoice.paidAt ? <DateCell iso={invoice.paidAt} /> : <Dash />}
                 </TableCell>
 
-                <TableCell className={CELL}>
+                <TableCell className={UI.cell}>
                   <DateCell iso={invoice.expiresAt} />
                 </TableCell>
               </TableRow>

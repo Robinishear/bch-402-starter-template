@@ -10,13 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { handleDeleteUser, handleUpdateUserStatus } from "../_core/admin.actions";
 import { IUser } from "../_core/admin.interface";
-
-type ActionResult = { success: boolean; message: string };
-
-const CONFIRM_TIMEOUT_MS = 3000;
-
-const headCell = "h-11 text-xs font-medium uppercase tracking-wider text-gray-500";
-const actionBtn = "h-8 gap-1.5 rounded-lg px-3 text-xs shadow-none transition-colors";
+import { actionBtn, ActionResult, CONFIRM_TIMEOUT_MS, headCell } from "./constants";
 
 function StatusBadge({ status }: { status: string }) {
   const active = status === "ACTIVE";

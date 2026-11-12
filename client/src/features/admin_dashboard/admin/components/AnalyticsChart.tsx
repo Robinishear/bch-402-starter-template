@@ -6,34 +6,8 @@ import { Loader2 } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { cn } from "@/_core/utils/utils";
-import type { IAnalytics, IAnalyticsPoint } from "../_core/admin.interface";
-
-type MetricKey = Exclude<keyof IAnalyticsPoint, "date">;
-
-type Metric = {
-  key: MetricKey;
-  label: string;
-  color: string;
-  format: (n: number) => string;
-};
-
-const int = (n: number) => Math.round(n).toLocaleString("en-US");
-
-const METRICS: Metric[] = [
-  { key: "users", label: "New users", color: "#34d399", format: int },
-  { key: "invoices", label: "Invoices", color: "#22d3ee", format: int },
-  { key: "paidInvoices", label: "Paid invoices", color: "#a78bfa", format: int },
-  {
-    key: "revenueUsd",
-    label: "Revenue",
-    color: "#fbbf24",
-    format: (n) => `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-  },
-  { key: "aiUses", label: "AI uses", color: "#38bdf8", format: int },
-  { key: "aiTokens", label: "AI tokens", color: "#f472b6", format: (n) => Intl.NumberFormat("en-US", { notation: "compact" }).format(n) },
-];
-
-const RANGES = [7, 30, 90] as const;
+import type { IAnalytics } from "../_core/admin.interface";
+import { Metric, MetricKey, METRICS, RANGES } from "./constants";
 
 const formatDate = (date: string, long = false) =>
   new Date(`${date}T00:00:00Z`).toLocaleDateString("en-US", {

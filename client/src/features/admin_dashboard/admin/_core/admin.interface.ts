@@ -85,3 +85,10 @@ export interface IAnalytics {
   totals: IStats;
   series: IAnalyticsPoint[];
 }
+
+
+export interface AdminActionState {
+  success: boolean;
+  message: string;
+  data?: any;
+}
